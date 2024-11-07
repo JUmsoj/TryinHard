@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class SwordScript : MonoBehaviour
 {
+    readonly int speed = 5;
+    Quaternion rotate;
+    private int directionx;
+    private int directionz;
     public bool threw = false;
     private Vector3 move = new Vector3(-5, 0, 0);
     private Rigidbody rb;
@@ -29,10 +33,13 @@ public class SwordScript : MonoBehaviour
         {
             gameObject.transform.Translate(move);
         }
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
-        { 
-            move.x*=Input.GetAxis("switch");
-            transform.Translate(move);
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            Turn("h");
+        }
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            Turn("v");
         }
         if (Input.GetKeyDown(KeyCode.A) && !threw)
         {
@@ -41,16 +48,29 @@ public class SwordScript : MonoBehaviour
             threw = true;
         }
     }
+    void Turn(string direction)
+    {
+        if(direction == "h")
+        {
+            rotate = new (45 * Input.GetAxis("switch") * speed, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
+            directionx = 5;
+            gameObject.transform.rotation = rotate;
+            
+        }
+        else if (direction == "v")
+        {
+            rotate = new(Quaternion.identity.x, Quaternion.identity.y, speed * 45 * Input.GetAxis("rotation"), Quaternion.identity.w);
+            directionz = 5;
+            gameObject.transform.rotation = rotate;
+        }
+    }
     private void Throw()
     {
-       
-        move = transform.forward;
+
+        move = new(directionx, 0, directionz);
         move.y = 0;
 
-        move.x *= 500000000000/400000000*-1;
-        move.z *= 5000000000000/40000000*-1;
         print($"X:{move.x}, Y:{move.y}, Z:{move.z}");
-        gameObject.transform.rotation = new Quaternion(180, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
         gameObject.transform.Translate(move);
         
         
