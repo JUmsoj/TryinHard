@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 138085960}
   - component: {fileID: 138085959}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -363,11 +363,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 841790756971604281, guid: 7502eddc8737db2419ad84417b0a7e0e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 24.7
       objectReference: {fileID: 0}
     - target: {fileID: 841790756971604281, guid: 7502eddc8737db2419ad84417b0a7e0e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 11.87
       objectReference: {fileID: 0}
     - target: {fileID: 841790756971604281, guid: 7502eddc8737db2419ad84417b0a7e0e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -564,7 +564,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2881179fe47ccb14583e18fbdea5ff9c, type: 3}
       propertyPath: m_Name
-      value: Cylinder.003
+      value: Sword
       objectReference: {fileID: 0}
     - target: {fileID: 5666261585234168772, guid: 2881179fe47ccb14583e18fbdea5ff9c, type: 3}
       propertyPath: m_LocalPosition.x

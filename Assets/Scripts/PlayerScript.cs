@@ -22,13 +22,13 @@ public class PlayerScript : MonoBehaviour
         {
             move = speed * Input.GetAxisRaw("Vertical");
             trans.Translate(0, 0, (float)move/2);
-            print("moving vertically");
+            
         }
         if(Input.GetAxisRaw("Horizontal") != 0)
         {
             move = speed * Input.GetAxisRaw("Horizontal");
             trans.Translate((float)move/2, 0,0);
-            print("moving horizontally");
+            
         }
     }
 }

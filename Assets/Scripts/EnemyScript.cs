@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class EnemyScript : MonoBehaviour
 {
+    private bool touchingground = false;
     public GameObject player;
     private Rigidbody rb;
     private Spawner spawner;
@@ -15,9 +16,9 @@ public class EnemyScript : MonoBehaviour
     void Awake()
     {
         gameObject.transform.position = new Vector3(0, 2, 0);
-        x = UnityEngine.Random.Range(-2, 2);
+        x = UnityEngine.Random.Range(-1, 1);
         y = 0;
-        z = UnityEngine.Random.Range(-2, 2);
+        z = UnityEngine.Random.Range(-1, 1);
     }
     void Start()
     {
@@ -35,7 +36,6 @@ public class EnemyScript : MonoBehaviour
             {
                 gameObject.name = "MINOR";
             }
-            PlayerScript.health--;
             if(PlayerScript.health <= 0 )
             {
                 Destroy(player);
@@ -58,15 +58,22 @@ public class EnemyScript : MonoBehaviour
     }
     void Move()
     {
-        gameObject.transform.Translate(x, y, z);
+        if (touchingground)
+        {
+            gameObject.transform.Translate(x, y, z);
+        }
     }
     private void OnCollisionEnter(Collision collision)
     {
-        
-        if(collision.gameObject.CompareTag("Finish"))
+
+        if (collision.gameObject.CompareTag("Finish"))
         {
             player = collision.gameObject;
             touchingplayer = true;
+        }
+        else if (collision.gameObject.name == "Ground")
+        {
+            touchingground = true;
         }
         print("touched player");
         PlayerScript.health--;
@@ -76,6 +83,10 @@ public class EnemyScript : MonoBehaviour
         if(collision.gameObject.CompareTag("Finish"))
         {
             touchingplayer = false;
+        }
+        else if(collision.gameObject.name == "Ground")
+        {
+            touchingground = false;
         }
         PlayerScript.health--;
     }

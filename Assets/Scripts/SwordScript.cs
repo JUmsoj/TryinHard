@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SwordScript : MonoBehaviour
 {
@@ -22,7 +23,9 @@ public class SwordScript : MonoBehaviour
     void Start()
     {
         
-        /*attacks[0] = "Sword";
+        /*
+         * 
+         * attacks[0] = "Sword";
         attacks[1] = "Sharp" + attacks[0];
         print(attacks[0]);*/
         gameObject.transform.parent = GameObject.Find("Player").transform;
@@ -55,6 +58,15 @@ public class SwordScript : MonoBehaviour
             print("ht");
             Throw();
             threw = true;
+        }
+        if (Input.GetMouseButton(0))
+        {
+            Turn("h");
+        }
+        if (Input.GetMouseButton(1))
+        {
+            rotate = Quaternion.identity;
+            gameObject.transform.rotation = rotate;
         }
     }
     private void Turn(string direction)
@@ -93,6 +105,7 @@ public class SwordScript : MonoBehaviour
             Destroy(thing);
         }
         Debug.Log($"Destroyed {thing.name}");
+        return;
     }
 
 }
