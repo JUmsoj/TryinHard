@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class SwordScript : MonoBehaviour
 {
+    bool to = true;
     // private string[] attacks;
     readonly int speed = 5;
     Quaternion rotate;
@@ -15,9 +16,12 @@ public class SwordScript : MonoBehaviour
     private Vector3 move = new Vector3(-5, 0, 0);
     private Rigidbody rb;
     private MeshCollider Collider;
+
     // Start is called before the first frame update
+   
     void Start()
     {
+        
         /*attacks[0] = "Sword";
         attacks[1] = "Sharp" + attacks[0];
         print(attacks[0]);*/
@@ -46,7 +50,7 @@ public class SwordScript : MonoBehaviour
         {
             Turn("v");
         }
-        if (Input.GetKeyDown(KeyCode.A) && !threw)
+        if (Input.GetKeyDown(KeyCode.T) && !threw)
         {
             print("ht");
             Throw();
@@ -77,9 +81,18 @@ public class SwordScript : MonoBehaviour
         print($"X:{move.x}, Y:{move.y}, Z:{move.z}");
         gameObject.transform.Translate(move);
         
-        
         Debug.Log("threw");
         return 0;
     }
-   
+    private void OnCollisionEnter(Collision collision)
+    {
+
+        GameObject thing = collision.gameObject;
+        if(collision.gameObject.CompareTag("Enemy") && to)
+        {
+            Destroy(thing);
+        }
+        Debug.Log($"Destroyed {thing.name}");
+    }
+
 }
