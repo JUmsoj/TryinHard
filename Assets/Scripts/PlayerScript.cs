@@ -17,7 +17,11 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print(health);
+        x = health;
+        if(health < 0)
+        {
+            Destroy(gameObject);
+        }
         if (Input.GetAxisRaw("Vertical") != 0) 
         {
             move = speed * Input.GetAxisRaw("Vertical");

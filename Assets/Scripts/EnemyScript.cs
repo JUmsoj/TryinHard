@@ -36,8 +36,9 @@ public class EnemyScript : MonoBehaviour
             {
                 gameObject.name = "MINOR";
             }
-            if(PlayerScript.health <= 0 )
+            if(PlayerScript.health < 0 )
             {
+                Debug.LogError("Kill");
                 Destroy(player);
             }
         }
