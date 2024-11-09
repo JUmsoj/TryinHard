@@ -98,10 +98,12 @@ public class SwordScript : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-
+        
         GameObject thing = collision.gameObject;
+        
         if(collision.gameObject.CompareTag("Enemy") && to)
         {
+            EnemyScript.spawner.count--;
             Destroy(thing);
         }
         Debug.Log($"Destroyed {thing.name}");

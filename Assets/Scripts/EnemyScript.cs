@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading;
 using UnityEngine;
 
 public class EnemyScript : MonoBehaviour
@@ -6,7 +7,7 @@ public class EnemyScript : MonoBehaviour
     private bool touchingground = false;
     public GameObject player;
     private Rigidbody rb;
-    private Spawner spawner;
+    public static Spawner spawner;
     private bool iscooldown = false;
     int x;
     int y;
@@ -15,6 +16,7 @@ public class EnemyScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        
         gameObject.transform.position = new Vector3(0, 2, 0);
         x = UnityEngine.Random.Range(-1, 1);
         y = 0;
@@ -22,8 +24,14 @@ public class EnemyScript : MonoBehaviour
     }
     void Start()
     {
-
-        spawner = ScriptableObject.CreateInstance<Spawner>();
+        if (spawner == null)
+        {
+            spawner = ScriptableObject.CreateInstance<Spawner>();
+        }
+        if (gameObject.name != "Enemy")
+        {
+            spawner.count++;
+        }
         rb = gameObject.GetComponent<Rigidbody>();
     }
 
@@ -34,16 +42,17 @@ public class EnemyScript : MonoBehaviour
         {
             if (gameObject.name != "Enemy")
             {
-                gameObject.name = "MINOR";
+                gameObject.name = "TrueEnemy";
             }
-            if(PlayerScript.health < 0 )
+            /*if(PlayerScript.health < 0 )
             {
                 Debug.LogError("Kill");
                 Destroy(player);
-            }
+            }*/
         }
         if (!iscooldown && gameObject.name == "Enemy")
         {
+            gameObject.tag = "Enemy";
             StartCoroutine(cooldown());
         }
         Move();
