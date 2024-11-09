@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class SwordScript : MonoBehaviour
 {
-    bool to = true;
     // private string[] attacks;
     readonly int speed = 5;
     Quaternion rotate;
@@ -41,7 +40,15 @@ public class SwordScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(threw)
+        if (EnemyScript.spawner.inventory != null && EnemyScript.spawner.inventory[0].name != gameObject.name)
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(true);
+        }
+        if (threw)
         {
             gameObject.transform.Translate(move);
         }
@@ -68,20 +75,27 @@ public class SwordScript : MonoBehaviour
             rotate = Quaternion.identity;
             gameObject.transform.rotation = rotate;
         }
+        if(Input.GetAxis("turn") != 0)
+        {
+            gameObject.transform.Rotate(new Vector3(0, 0, 90 * Input.GetAxis("turn")));
+            print($"Turned {90 * Input.GetAxis("turn")} Degrees");
+        }
+        
+       
     }
     private void Turn(string direction)
     {
         if(direction == "h")
         {
             rotate = new (45 * Input.GetAxis("switch") * speed, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
-            directionx = 5;
+            directionx = 5 * 5;
             gameObject.transform.rotation = rotate;
             
         }
         else if (direction == "v")
         {
             rotate = new(Quaternion.identity.x, speed * 45 * Input.GetAxis("rotation") , Quaternion.identity.z*speed * 45 * Input.GetAxis("rotation"), Quaternion.identity.w);
-            directionz = 5;
+            directionz = 5*5;
             gameObject.transform.rotation = rotate;
         }
     }
@@ -101,7 +115,7 @@ public class SwordScript : MonoBehaviour
         
         GameObject thing = collision.gameObject;
         
-        if(collision.gameObject.CompareTag("Enemy") && to)
+        if(collision.gameObject.CompareTag("Enemy"))
         {
             EnemyScript.spawner.count--;
             Destroy(thing);

@@ -4,16 +4,18 @@ using UnityEngine;
 using System;
 public class Spawner : ScriptableObject
 {
+    public int hand = 0;
     public int count;
     public int num = 2;
     public GameObject enemy;
     private bool oneatatime = true;
-    private GameObject[] inventory;
+    public List<GameObject> inventory = new();
     private void Awake()
     {
-        inventory = new GameObject[10];
-      
-        inventory[0] = GameObject.Find("Sword");
+
+        
+        inventory.Add(GameObject.Find("sword"));
+        inventory.Add(new GameObject("Bow"));
         if (inventory[0] != null)
         {
             Debug.Log(inventory[0].name);
@@ -36,7 +38,8 @@ public class Spawner : ScriptableObject
                 catch(ArgumentException)
                 {
                     enemy = Resources.Load<GameObject>("Enemy");
-                    Instantiate(enemy).tag = "Enemy";
+                    i--;
+                    continue;
                 }
             }
             Debug.Log("thing");

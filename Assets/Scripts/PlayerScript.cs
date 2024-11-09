@@ -1,7 +1,9 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    private Rigidbody rb;
     public static double health = 100;
     public double x;
     double move;
@@ -10,6 +12,7 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        rb = gameObject.GetOrAddComponent<Rigidbody>();
         speed = UnityEngine.Random.Range((float)0.5, 1); 
         trans = gameObject.GetComponent<Transform>();
     }
@@ -25,13 +28,13 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetAxisRaw("Vertical") != 0) 
         {
             move = speed * Input.GetAxisRaw("Vertical");
-            trans.Translate(0, 0, (float)move/2);
+            rb.linearVelocity = new Vector3(0, 0, (float)move * 1);
             
         }
         if(Input.GetAxisRaw("Horizontal") != 0)
         {
             move = speed * Input.GetAxisRaw("Horizontal");
-            trans.Translate((float)move/2, 0,0);
+            rb.linearVelocity = new Vector3((float)move * 10, 0,0);
             
         }
     }
