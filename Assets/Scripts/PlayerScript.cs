@@ -3,18 +3,19 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    private Rigidbody rb;
+    private CharacterController cc;
+    private Vector3 move;
     public static double health = 100;
     public double x;
-    double move;
-    float speed;
+    float speed = 30;
     Transform trans;
+    public Transform cam;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rb = gameObject.GetOrAddComponent<Rigidbody>();
         speed = UnityEngine.Random.Range((float)0.5, 1); 
         trans = gameObject.GetComponent<Transform>();
+        cc = gameObject.AddComponent<CharacterController>();
     }
 
     // Update is called once per frame
@@ -25,17 +26,34 @@ public class PlayerScript : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        if (Input.GetAxisRaw("Vertical") != 0) 
+        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0) 
         {
-            move = speed * Input.GetAxisRaw("Vertical");
-            rb.linearVelocity = new Vector3(0, 0, (float)move * 1);
+            
+            move =  Time.deltaTime * speed * new Vector3(Input.GetAxisRaw("Horizontal") * speed, 0, Input.GetAxisRaw("Vertical") * speed);
+            move = transform.TransformDirection(move);
+            cc.Move(Thing(move));
+            Turn();
+            
             
         }
-        if(Input.GetAxisRaw("Horizontal") != 0)
+        if (!cc.isGrounded)
         {
-            move = speed * Input.GetAxisRaw("Horizontal");
-            rb.linearVelocity = new Vector3((float)move * 10, 0,0);
-            
+            cc.Move(new Vector3(0, (float)-9.18, 0));
         }
+    }
+    void Turn()
+    {
+        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
+        {
+            Vector3 currentlook = cam.forward;
+            currentlook.y = 0;
+            Quaternion target = Quaternion.LookRotation(currentlook);
+            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5);
+        }
+    }
+    Vector3 Thing(Vector3 move)
+    {
+        move.Normalize();
+        return move;
     }
 }

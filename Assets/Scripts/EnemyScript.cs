@@ -16,8 +16,10 @@ public class EnemyScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        
-        gameObject.transform.position = new Vector3(0, 2, 0);
+        if (gameObject.name != "Enemy")
+        {
+            gameObject.transform.position = new Vector3(0, 2, 0);
+        }
         x = UnityEngine.Random.Range(-1, 1);
         y = 0;
         z = UnityEngine.Random.Range(-1, 1);
