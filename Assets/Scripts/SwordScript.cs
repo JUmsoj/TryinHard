@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class SwordScript : MonoBehaviour
 {
     // private string[] attacks;
+    private Animator anim;
     readonly int speed = 5;
     Quaternion rotate;
     private int directionx;
@@ -21,6 +22,7 @@ public class SwordScript : MonoBehaviour
    
     void Start()
     {
+        anim = GetComponent<Animator>();   
         // set this at every Weapon script
 
         
@@ -65,14 +67,8 @@ public class SwordScript : MonoBehaviour
         {
             gameObject.transform.Translate(move);
         }
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            Turn("h");
-        }
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            Turn("v");
-        }
+     
+        
         if (Input.GetKeyDown(KeyCode.T) && !threw)
         {
             print("ht");
@@ -81,13 +77,9 @@ public class SwordScript : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
-            Turn("h");
+            anim.SetTrigger("Hit");
         }
-        if (Input.GetMouseButton(1))
-        {
-            rotate = Quaternion.identity;
-            gameObject.transform.rotation = rotate;
-        }
+       
         if(Input.GetAxis("turn") != 0)
         {
             gameObject.transform.Rotate(new Vector3(0, 0, 90 * Input.GetAxis("turn")));
@@ -96,22 +88,8 @@ public class SwordScript : MonoBehaviour
         
        
     }
-    private void Turn(string direction)
-    {
-        if(direction == "h")
-        {
-            rotate = new (45 * Input.GetAxis("switch") * speed, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
-            directionx = 5 * 5;
-            gameObject.transform.rotation = rotate;
-            
-        }
-        else if (direction == "v")
-        {
-            rotate = new(Quaternion.identity.x, speed * 45 * Input.GetAxis("rotation") , Quaternion.identity.z*speed * 45 * Input.GetAxis("rotation"), Quaternion.identity.w);
-            directionz = 5*5;
-            gameObject.transform.rotation = rotate;
-        }
-    }
+
+   
     private int Throw()
     {
         gameObject.transform.parent = null;
