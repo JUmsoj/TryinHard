@@ -7,7 +7,7 @@ public class PlayerScript : MonoBehaviour
     private Vector3 move;
     public static double health = 100;
     public double x;
-    float speed = 3;
+    float speed = 0.001f;
     Transform trans;
     public Transform cam;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -54,5 +54,9 @@ public class PlayerScript : MonoBehaviour
     {
         move.Normalize();
         return move;
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+       
     }
 }

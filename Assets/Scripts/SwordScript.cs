@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.WSA;
 
 public class SwordScript : MonoBehaviour
 {
@@ -36,12 +37,10 @@ public class SwordScript : MonoBehaviour
         Collider.convex = true;
         Collider.sharedMesh = gameObject.GetOrAddComponent<MeshFilter>().mesh;
         rb = gameObject.AddComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezePositionY;
+        
         rb.isKinematic = true;
         print($"{gameObject.name}Object Created");
-        gameObject.GetComponent<MeshRenderer>().enabled = false;
-        Collider.enabled = false;
-        rb.detectCollisions = false;
+        Deactivate(gameObject);
     }
 
     // Update is called once per frame
@@ -51,15 +50,22 @@ public class SwordScript : MonoBehaviour
         {
             if (EnemyScript.spawner.inventory[0] != null)
             {
-                EnemyScript.spawner.inventory[0].GetOrAddComponent<MeshRenderer>().enabled = true; // since this exists
-                EnemyScript.spawner.inventory[0].GetOrAddComponent<MeshCollider>().enabled = true;
-                EnemyScript.spawner.inventory[0].GetOrAddComponent<Rigidbody>().detectCollisions = true;
+                Activate(EnemyScript.spawner.inventory[0]);
+                if (EnemyScript.spawner.inventory[0] = gameObject)
+                {
+                    // special cases goes here;
+                    rb.constraints = RigidbodyConstraints.FreezePositionY;
+                }
             }
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            print("nothing");
+            
         }
+          
+          
+        
+       
 
 
 
@@ -88,7 +94,36 @@ public class SwordScript : MonoBehaviour
         
        
     }
-
+    public static void Deactivate(GameObject target)
+    {
+        try
+        {
+            target.GetComponent<MeshCollider>().enabled = false;
+            target.GetComponent<Rigidbody>().detectCollisions = false;
+            target.GetComponent<MeshRenderer>().enabled = false;
+        }
+        catch (Exception)
+        {
+            target.AddComponent<MeshCollider>().enabled = false;
+            target.AddComponent<Rigidbody>().detectCollisions = false;
+            target.AddComponent<MeshRenderer>().enabled = false;
+        }
+    }
+    public static void Activate(GameObject target)
+    {
+        try
+        {
+            target.GetComponent<MeshCollider>().enabled = true;
+            target.GetComponent<Rigidbody>().detectCollisions = true;
+            target.GetComponent<MeshRenderer>().enabled = true;
+        }
+        catch (Exception)
+        {
+            target.AddComponent<MeshCollider>().enabled = true;
+            target.AddComponent<Rigidbody>().detectCollisions = true;
+            target.AddComponent<MeshRenderer>().enabled = true;
+        }
+    }
    
     private int Throw()
     {
@@ -106,9 +141,9 @@ public class SwordScript : MonoBehaviour
         
         GameObject thing = collision.gameObject;
         
-        if(collision.gameObject.CompareTag("Enemy"))
+        if(collision.gameObject.CompareTag("Enemy") && EnemyScript.spawner.inventory[0] == gameObject)
         {
-            EnemyScript.spawner.count--;
+            EnemyScript.spawner.count--; 
             Destroy(thing);
         }
         Debug.Log($"Destroyed {thing.name}");

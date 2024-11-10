@@ -9,21 +9,17 @@ public class Spawner : ScriptableObject
     public int num = 2;
     public GameObject enemy;
     private bool oneatatime = true;
-    public List<GameObject> inventory = new();
+    public List<GameObject> inventory = new(10);
     private void Awake()
     {
-        inventory.Add( GameObject.Find("sword"));
         
-        if (inventory[0] != null)
-        {
-            Debug.Log(inventory[0].name);
-        }
+      
         enemy = Resources.Load<GameObject>("Enemy");
     }
     public void spawn()
     {
         // wave system
-        if (oneatatime && count == 0)
+        /*if (oneatatime && count == 0)
         {
             num++;
             oneatatime = false;
@@ -42,9 +38,9 @@ public class Spawner : ScriptableObject
                 }
             }
             Debug.Log("thing");
-            oneatatime=true;
+            oneatatime=true;*/
             
-        }
+       // }
         
     }
     

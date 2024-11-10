@@ -25,6 +25,7 @@ public class EnemyScript : MonoBehaviour
         if (spawner == null)
         {
             spawner = ScriptableObject.CreateInstance<Spawner>();
+          
         }
         if (gameObject.name != "Enemy")
         {
