@@ -19,7 +19,7 @@ public class Spawner : ScriptableObject
     public void spawn()
     {
         // wave system
-        /*if (oneatatime && count == 0)
+        if (oneatatime && count == 0)
         {
             num++;
             oneatatime = false;
@@ -38,9 +38,9 @@ public class Spawner : ScriptableObject
                 }
             }
             Debug.Log("thing");
-            oneatatime=true;*/
+            oneatatime=true;
             
-       // }
+        }
         
     }
     

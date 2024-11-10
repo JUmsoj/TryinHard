@@ -48,10 +48,17 @@ public class SwordScript : MonoBehaviour
     {
         try
         {
-            if (EnemyScript.spawner.inventory[0] != null)
+            if (EnemyScript.spawner.inventory[EnemyScript.spawner.hand] != null)
             {
-                Activate(EnemyScript.spawner.inventory[0]);
-                if (EnemyScript.spawner.inventory[0] = gameObject)
+                Activate(EnemyScript.spawner.inventory[EnemyScript.spawner.hand]);
+                if (EnemyScript.spawner.inventory.Count > 1)
+                {
+                    for(int i = 1; i < EnemyScript.spawner.inventory.Count; i++)
+                    {
+                        Deactivate(EnemyScript.spawner.inventory[i]);
+                    }
+                }
+                if (EnemyScript.spawner.inventory[EnemyScript.spawner.hand] = gameObject)
                 {
                     // special cases goes here;
                     rb.constraints = RigidbodyConstraints.FreezePositionY;
@@ -62,7 +69,7 @@ public class SwordScript : MonoBehaviour
         {
             
         }
-          
+        EnemyScript.spawner.hand += (int)Input.GetAxis("switch");
           
         
        
@@ -96,6 +103,12 @@ public class SwordScript : MonoBehaviour
     }
     public static void Deactivate(GameObject target)
     {
+        if (target != GameObject.Find("sword"))
+        {
+            target.SetActive(false);
+            return;
+        }
+        
         try
         {
             target.GetComponent<MeshCollider>().enabled = false;
@@ -111,6 +124,11 @@ public class SwordScript : MonoBehaviour
     }
     public static void Activate(GameObject target)
     {
+        if (target != GameObject.Find("sword"))
+        {
+            target.SetActive(false);
+        }
+        return;
         try
         {
             target.GetComponent<MeshCollider>().enabled = true;
