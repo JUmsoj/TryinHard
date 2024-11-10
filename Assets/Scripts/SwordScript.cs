@@ -21,6 +21,8 @@ public class SwordScript : MonoBehaviour
    
     void Start()
     {
+        // set this at every Weapon script
+
         
         /*
          * 
@@ -35,19 +37,30 @@ public class SwordScript : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezePositionY;
         rb.isKinematic = true;
         print($"{gameObject.name}Object Created");
+        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        Collider.enabled = false;
+        rb.detectCollisions = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (EnemyScript.spawner.inventory != null && EnemyScript.spawner.inventory[0].name != gameObject.name)
+        try
         {
-            gameObject.SetActive(false);
+            if (EnemyScript.spawner.inventory[0] != null)
+            {
+                EnemyScript.spawner.inventory[0].GetOrAddComponent<MeshRenderer>().enabled = true; // since this exists
+                EnemyScript.spawner.inventory[0].GetOrAddComponent<MeshCollider>().enabled = true;
+                EnemyScript.spawner.inventory[0].GetOrAddComponent<Rigidbody>().detectCollisions = true;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            gameObject.SetActive(true);
+            print("nothing");
         }
+
+
+
         if (threw)
         {
             gameObject.transform.Translate(move);

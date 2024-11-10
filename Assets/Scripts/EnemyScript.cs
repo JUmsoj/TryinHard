@@ -10,21 +10,15 @@ public class EnemyScript : MonoBehaviour
     private Rigidbody rb;
     public static Spawner spawner;
     private bool iscooldown = false;
-    int x;
-    int y;
-    int z;
     public bool touchingplayer = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-
+        player = GameObject.Find("Player");
         if (gameObject.name != "Enemy")
         {
             gameObject.transform.position = new Vector3(0, 2, 0);
         }
-        x = UnityEngine.Random.Range(-10, 10);
-        y = 0;
-        z = UnityEngine.Random.Range(-10, 10);
     }
     void Start()
     {
@@ -56,7 +50,6 @@ public class EnemyScript : MonoBehaviour
         }
         if (!iscooldown && gameObject.name == "Enemy")
         {
-            gameObject.tag = "Enemy";
             StartCoroutine(cooldown());
         }
         Move();
@@ -81,9 +74,9 @@ public class EnemyScript : MonoBehaviour
     }
     void Move()
     {
-        if (touchingground)
+        if (touchingground && gameObject.name != "Enemy")
         {
-            rb.linearVelocity = new Vector3(x^2, y, z^2);
+            rb.transform.position = Vector3.MoveTowards(gameObject.transform.position, player.transform.position, Time.deltaTime * 5);
         }
         if(touchingplayer && !active)
         {
@@ -95,7 +88,7 @@ public class EnemyScript : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Finish"))
         {
-            player = collision.gameObject;
+            
             touchingplayer = true;
             print("touched player");
             PlayerScript.health--;

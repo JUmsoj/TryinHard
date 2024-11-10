@@ -12,10 +12,8 @@ public class Spawner : ScriptableObject
     public List<GameObject> inventory = new();
     private void Awake()
     {
-
+        inventory.Add( GameObject.Find("sword"));
         
-        inventory.Add(GameObject.Find("sword"));
-        inventory.Add(new GameObject("Bow"));
         if (inventory[0] != null)
         {
             Debug.Log(inventory[0].name);
@@ -27,6 +25,7 @@ public class Spawner : ScriptableObject
         // wave system
         if (oneatatime && count == 0)
         {
+            num++;
             oneatatime = false;
             for (int i = 0; i < num; i++)
             {
