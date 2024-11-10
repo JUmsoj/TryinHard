@@ -7,12 +7,13 @@ public class PlayerScript : MonoBehaviour
     private Vector3 move;
     public static double health = 100;
     public double x;
-    float speed = 30;
+    float speed = 3;
     Transform trans;
     public Transform cam;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        cam = GameObject.Find("FreeLook Camera").transform;
         speed = UnityEngine.Random.Range((float)0.5, 1); 
         trans = gameObject.GetComponent<Transform>();
         cc = gameObject.AddComponent<CharacterController>();
@@ -22,14 +23,11 @@ public class PlayerScript : MonoBehaviour
     void Update()
     {
         x = health;
-        if(health < 0)
-        {
-            Destroy(gameObject);
-        }
+        
         if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0) 
         {
             
-            move =  Time.deltaTime * speed * new Vector3(Input.GetAxisRaw("Horizontal") * speed, 0, Input.GetAxisRaw("Vertical") * speed);
+            move =  Time.deltaTime * speed * new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
             move = transform.TransformDirection(move);
             cc.Move(Thing(move));
             Turn();
@@ -49,6 +47,7 @@ public class PlayerScript : MonoBehaviour
             currentlook.y = 0;
             Quaternion target = Quaternion.LookRotation(currentlook);
             transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5);
+            transform.rotation = cam.rotation;
         }
     }
     Vector3 Thing(Vector3 move)

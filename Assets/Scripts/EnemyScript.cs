@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyScript : MonoBehaviour
 {
+    public bool active = false;
     private bool touchingground = false;
     public GameObject player;
     private Rigidbody rb;
@@ -16,13 +17,14 @@ public class EnemyScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+
         if (gameObject.name != "Enemy")
         {
             gameObject.transform.position = new Vector3(0, 2, 0);
         }
-        x = UnityEngine.Random.Range(-1, 1);
+        x = UnityEngine.Random.Range(-10, 10);
         y = 0;
-        z = UnityEngine.Random.Range(-1, 1);
+        z = UnityEngine.Random.Range(-10, 10);
     }
     void Start()
     {
@@ -68,11 +70,24 @@ public class EnemyScript : MonoBehaviour
         spawner.spawn();
         yield break;
     }
+    private IEnumerator Fight()
+    {
+        active = true;
+        yield return new WaitForSeconds(1);
+        PlayerScript.health--;
+        active = false;
+        Debug.Log("took damage");
+        yield break;
+    }
     void Move()
     {
         if (touchingground)
         {
-            gameObject.transform.Translate(x, y, z);
+            rb.linearVelocity = new Vector3(x^2, y, z^2);
+        }
+        if(touchingplayer && !active)
+        {
+            StartCoroutine(Fight());
         }
     }
     private void OnCollisionEnter(Collision collision)
@@ -82,25 +97,27 @@ public class EnemyScript : MonoBehaviour
         {
             player = collision.gameObject;
             touchingplayer = true;
+            print("touched player");
+            PlayerScript.health--;
         }
         else if (collision.gameObject.name == "Ground")
         {
             touchingground = true;
         }
-        print("touched player");
-        PlayerScript.health--;
+        
     }
     private void OnCollisionExit(Collision collision)
     {
         if(collision.gameObject.CompareTag("Finish"))
         {
             touchingplayer = false;
+            PlayerScript.health--;
         }
         else if(collision.gameObject.name == "Ground")
         {
             touchingground = false;
         }
-        PlayerScript.health--;
+       
     }
 
 }
