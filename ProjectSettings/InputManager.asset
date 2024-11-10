@@ -297,8 +297,8 @@ InputManager:
     m_Name: switch
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: right
-    positiveButton: left
+    negativeButton: o
+    positiveButton: p
     altNegativeButton: 
     altPositiveButton: joystick button 1
     gravity: 1000

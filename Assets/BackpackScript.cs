@@ -10,6 +10,7 @@ public class BackpackScript : MonoBehaviour
     {
 
         container.Add(GameObject.Find("sword"));
+        container.Add(new GameObject("bow"));
     }
 
     // Update is called once per frame

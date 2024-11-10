@@ -46,31 +46,9 @@ public class SwordScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        try
-        {
-            if (EnemyScript.spawner.inventory[EnemyScript.spawner.hand] != null)
-            {
-                Activate(EnemyScript.spawner.inventory[EnemyScript.spawner.hand]);
-                if (EnemyScript.spawner.inventory.Count > 1)
-                {
-                    for(int i = 1; i < EnemyScript.spawner.inventory.Count; i++)
-                    {
-                        Deactivate(EnemyScript.spawner.inventory[i]);
-                    }
-                }
-                if (EnemyScript.spawner.inventory[EnemyScript.spawner.hand] = gameObject)
-                {
-                    // special cases goes here;
-                    rb.constraints = RigidbodyConstraints.FreezePositionY;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            
-        }
-        EnemyScript.spawner.hand += (int)Input.GetAxis("switch");
-          
+
+
+        UpdateInventoryLogic();
         
        
 
@@ -108,7 +86,7 @@ public class SwordScript : MonoBehaviour
             target.SetActive(false);
             return;
         }
-        
+        target.transform.parent = null;
         try
         {
             target.GetComponent<MeshCollider>().enabled = false;
@@ -127,8 +105,10 @@ public class SwordScript : MonoBehaviour
         if (target != GameObject.Find("sword"))
         {
             target.SetActive(false);
+            return;
         }
-        return;
+        target.transform.parent = GameObject.Find("Player").transform; 
+        // add code to make it near;
         try
         {
             target.GetComponent<MeshCollider>().enabled = true;
@@ -166,6 +146,38 @@ public class SwordScript : MonoBehaviour
         }
         Debug.Log($"Destroyed {thing.name}");
         return;
+    }
+    private static void UpdateInventoryLogic()
+    {
+        try
+        {
+            if (EnemyScript.spawner.inventory[EnemyScript.spawner.hand] != null)
+            {
+                Activate(EnemyScript.spawner.inventory[EnemyScript.spawner.hand]);
+                if (EnemyScript.spawner.inventory.Count > 1)
+                {
+                    for (int i = 1; i < EnemyScript.spawner.inventory.Count; i++)
+                    {
+                        Deactivate(EnemyScript.spawner.inventory[i]);
+                    }
+                }
+                // special case
+                if (EnemyScript.spawner.inventory[EnemyScript.spawner.hand] = GameObject.Find("sword"))
+                {
+                    
+                    GameObject.Find("sword").GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+                }
+            }
+        }
+        catch (Exception)
+        {
+
+        }
+        if (Input.GetAxis("switch") != 0)
+        {
+            EnemyScript.spawner.hand += (int)Input.GetAxisRaw("switch");
+            print(Input.GetAxisRaw("switch"));
+        }
     }
 
 }
