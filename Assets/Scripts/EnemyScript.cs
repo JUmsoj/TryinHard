@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Threading;
 using UnityEngine;
@@ -114,4 +115,8 @@ public class EnemyScript : MonoBehaviour
        
     }
 
+    internal int NumberPress()
+    {
+        throw new NotImplementedException();
+    }
 }
