@@ -23,21 +23,8 @@ public class PlayerScript : MonoBehaviour
     void Update()
     {
         x = health;
+        Move();
         
-        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0) 
-        {
-            
-            move =  Time.deltaTime * speed * new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-            move = transform.TransformDirection(move);
-            cc.Move(Thing(move));
-            Turn();
-            
-            
-        }
-        if (!cc.isGrounded)
-        {
-            cc.Move(new Vector3(0, (float)-9.18, 0));
-        }
     }
     void Turn()
     {
@@ -48,6 +35,23 @@ public class PlayerScript : MonoBehaviour
             Quaternion target = Quaternion.LookRotation(currentlook);
             transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5);
             transform.rotation = cam.rotation;
+        }
+    }
+    private void Move()
+    {
+        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
+        {
+
+            move = Time.deltaTime * speed * new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+            move = transform.TransformDirection(move);
+            cc.Move(Thing(move));
+            Turn();
+
+
+        }
+        if (!cc.isGrounded)
+        {
+            cc.Move(new Vector3(0, (float)-9.18, 0));
         }
     }
     Vector3 Thing(Vector3 move)
