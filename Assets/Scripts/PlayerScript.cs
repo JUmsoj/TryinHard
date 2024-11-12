@@ -1,8 +1,11 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    [SerializeField]
+    bool cooldown= false;
     private CharacterController cc;
     private Vector3 move;
     public static double health = 100;
@@ -24,7 +27,16 @@ public class PlayerScript : MonoBehaviour
     {
         x = health;
         Move();
-        
+        if(Input.GetKey(KeyCode.L))
+        {
+            Dash(cooldown);
+        }
+    }
+    private IEnumerator Tiring()
+    {
+        yield return new WaitForSeconds(1);
+        cooldown = false;
+        yield break;
     }
     void Turn()
     {
@@ -52,6 +64,27 @@ public class PlayerScript : MonoBehaviour
         if (!cc.isGrounded)
         {
             cc.Move(new Vector3(0, (float)-9.18, 0));
+        }
+    }
+    void Dash(bool tired)
+    {
+        if (!tired)
+        {
+            Vector3 dash = new(0, 0, 5^2);
+            dash = transform.TransformDirection(dash);
+            
+            dash *= speed;
+            dash *= Time.deltaTime;
+            dash.Normalize();
+            for (int i = 0; i < 2; i++)
+            {
+                cc.Move(dash);
+            }
+            Turn();
+            cooldown = true;
+           
+            StartCoroutine(Tiring());
+
         }
     }
     Vector3 Thing(Vector3 move)

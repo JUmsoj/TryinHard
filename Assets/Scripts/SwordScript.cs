@@ -89,11 +89,13 @@ public class SwordScript : MonoBehaviour
             target.transform.parent = null;
             return;
         }
-        
-        
+        else
+        {
+            sword.transform.parent = null;
             sword.GetComponent<MeshCollider>().enabled = false;
             sword.GetComponent<Rigidbody>().detectCollisions = false;
             sword.GetComponent<MeshRenderer>().enabled = false;
+        }
         
         
         
@@ -103,26 +105,33 @@ public class SwordScript : MonoBehaviour
         var hand = GameObject.Find("Hand");
         var player = GameObject.Find("Player");
         var sword = GameObject.Find("sword");
+
         if (target != sword)
         {
+            sword = null;
             target.SetActive(true);
             target.transform.parent = hand.transform;
             target.transform.position = hand.transform.position;
             return;
         }
-        // sword exception
-        if(sword.transform.parent != hand.transform) // if sword is newly being activated then rotation will be reset
+        else
         {
-            sword.transform.rotation = hand.transform.rotation;
-        }
-        sword.transform.parent = hand.transform;
-        sword.transform.position = hand.transform.position;
-        
-        // add code to make it near;
-        
+            
+            if (sword.transform.parent != hand.transform) // if sword is newly being activated then rotation will be reset
+            {
+                sword.transform.rotation = hand.transform.rotation;
+            }
+            sword.transform.parent = hand.transform;
+            sword.transform.position = hand.transform.position;
+
+            // add code to make it near;
+
             sword.GetComponent<MeshCollider>().enabled = true;
             sword.GetComponent<Rigidbody>().detectCollisions = true;
             sword.GetComponent<MeshRenderer>().enabled = true;
+        }
+        // sword exception
+        
         
         
         
