@@ -13,7 +13,7 @@ public class SwordScript : MonoBehaviour
     private static List<GameObject> inv;
     private static int selection;
     private Animator anim;
-    readonly int speed = 5;
+    
     Quaternion rotate;
     private int directionx;
     private int directionz;
@@ -44,7 +44,7 @@ public class SwordScript : MonoBehaviour
         
         rb.isKinematic = true;
         print($"{gameObject.name}Object Created");
-        Deactivate(gameObject);
+        
 
     }
 
@@ -52,7 +52,7 @@ public class SwordScript : MonoBehaviour
     void Update()
     {
 
-        UpdateInventoryLogic();
+        
         
         if (threw)
         {
@@ -79,64 +79,7 @@ public class SwordScript : MonoBehaviour
         
        
     }
-    public static void Deactivate(GameObject target)
-    {
-        GameObject hand = GameObject.Find("Hand");
-        var sword = GameObject.Find("sword");
-        if (target != sword)
-        {
-            target.SetActive(false);
-            target.transform.parent = null;
-            return;
-        }
-        else
-        {
-            sword.transform.parent = null;
-            sword.GetComponent<MeshCollider>().enabled = false;
-            sword.GetComponent<Rigidbody>().detectCollisions = false;
-            sword.GetComponent<MeshRenderer>().enabled = false;
-        }
-        
-        
-        
-    }
-    public static void Activate(GameObject target)
-    {
-        var hand = GameObject.Find("Hand");
-        var player = GameObject.Find("Player");
-        var sword = GameObject.Find("sword");
-
-        if (target != sword)
-        {
-            sword = null;
-            target.SetActive(true);
-            target.transform.parent = hand.transform;
-            target.transform.position = hand.transform.position;
-            return;
-        }
-        else
-        {
-            
-            if (sword.transform.parent != hand.transform) // if sword is newly being activated then rotation will be reset
-            {
-                sword.transform.rotation = hand.transform.rotation;
-            }
-            sword.transform.parent = hand.transform;
-            sword.transform.position = hand.transform.position;
-
-            // add code to make it near;
-
-            sword.GetComponent<MeshCollider>().enabled = true;
-            sword.GetComponent<Rigidbody>().detectCollisions = true;
-            sword.GetComponent<MeshRenderer>().enabled = true;
-        }
-        // sword exception
-        
-        
-        
-        
-        
-    }
+   
    
     private int Throw()
     {
@@ -162,84 +105,8 @@ public class SwordScript : MonoBehaviour
         Debug.Log($"Destroyed {thing.name}");
         return;
     }
-    private static void UpdateInventoryLogic()
-    {
-        try
-        {
-            inv = EnemyScript.spawner.inventory;
-            selection = EnemyScript.spawner.hand;
-            GameObject player = GameObject.Find("Player");
-            Activate(inv[selection]);
-
-                // deactivates everything else;
-                if (inv.Count > 1)
-                {
-                    for (int i = 0; i < inv.Count; i++)
-                    {
-                        if (selection != i)
-                        {
-                            Deactivate(inv[i]);
-                        }
-                    }
-                }
-                // special cases
-                if (inv[selection] == player)
-                {
-                    
-                    player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
-                }
-            
-        }
-        catch (Exception)
-        {
-            print("Does Not Exist Yet");
-        }
-        selection = NumberPress();
-        EnemyScript.spawner.hand = NumberPress();
-    }
-    static int NumberPress()
-    {
-      
-        if(Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            return 0;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            return 1;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            return 2;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            return 3;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            return 4;
-        }
-        if(Input.GetKeyDown (KeyCode.Alpha5))
-        {
-            return 5;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            return 6;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            return 7;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha8)) {
-            return 8;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            return 9;
-        }
-        return EnemyScript.spawner.hand;
-    }
+   
+    
+    
 
 }

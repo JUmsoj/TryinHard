@@ -1,10 +1,15 @@
+using NUnit;
+using System;
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    
     [SerializeField]
+    bool jumping = false;
     bool cooldown= false;
     private CharacterController cc;
     private Vector3 move;
@@ -16,6 +21,7 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Deactivate(GameObject.Find("sword"));
         cam = GameObject.Find("FreeLook Camera").transform;
         speed = UnityEngine.Random.Range((float)0.5, 1); 
         trans = gameObject.GetComponent<Transform>();
@@ -25,11 +31,16 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        UpdateInventoryLogic();
         x = health;
         Move();
         if(Input.GetKey(KeyCode.L))
         {
             Dash(cooldown);
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
         }
     }
     private IEnumerator Tiring()
@@ -61,9 +72,9 @@ public class PlayerScript : MonoBehaviour
 
 
         }
-        if (!cc.isGrounded)
+        if (!cc.isGrounded && !jumping)
         {
-            cc.Move(new Vector3(0, (float)-9.18, 0));
+            cc.Move(new Vector3(0, -8.18f, 0));
         }
     }
     void Dash(bool tired)
@@ -92,8 +103,145 @@ public class PlayerScript : MonoBehaviour
         move.Normalize();
         return move;
     }
+    void Jump()
+    {
+        jumping = true;
+        Vector3 jump = new (0, 2, 0);
+        jump *= Time.deltaTime;
+        jump.Normalize();
+        for (int i = 0; i < 4; i++)
+        {
+            cc.Move(jump);
+        }
+        StartCoroutine(GRAVITY());
+        
+    }
+    private IEnumerator GRAVITY()
+    {
+        yield return new WaitForSeconds(0.5f);
+        jumping = false;
+        yield break;
+    }
+    public static void Deactivate(GameObject target)
+    {
+        GameObject hand = GameObject.Find("Hand");
+        
+        
+            target.SetActive(false);
+            target.transform.parent = null;
+            return;
+        
+        
+
+
+
+    }
+    private static void UpdateInventoryLogic()
+    {
+        var inv = EnemyScript.spawner.inventory;
+        int selection = EnemyScript.spawner.hand;
+        try
+        {
+            
+            GameObject player = GameObject.Find("Player");
+            Activate(inv[selection]);
+
+            // deactivates everything else;
+            if (inv.Count > 1)
+            {
+                for (int i = 0; i < inv.Count; i++)
+                {
+                    if (selection != i)
+                    {
+                        Deactivate(inv[i]);
+                    }
+                }
+            }
+            // special cases
+            if (inv[selection] == player)
+            {
+
+                player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+            }
+
+        }
+        catch (Exception)
+        {
+            print("Does Not Exist Yet");
+        }
+        selection = NumberPress();
+        EnemyScript.spawner.hand = NumberPress();
+    }
+    static int NumberPress()
+    {
+
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            return 0;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            return 1;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            return 2;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            return 3;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            return 4;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            return 5;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            return 6;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            return 7;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            return 8;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            return 9;
+        }
+        return EnemyScript.spawner.hand;
+    }
+        public static void Activate(GameObject target)
+        {
+        var hand = GameObject.Find("Hand");
+        var player = GameObject.Find("Player");
+        target.SetActive(true);
+        if (target.transform.parent == null)
+        {
+            target.transform.rotation = hand.transform.rotation;
+        }
+        target.transform.parent = hand.transform;
+        target.transform.position = hand.transform.position;
+        
+        return;
+        
+
+
+
+
+
+    }
     private void OnCollisionEnter(Collision collision)
     {
-       
+       if(collision.gameObject.name == "Ground")
+        {
+            jumping = false;
+        }
     }
 }
