@@ -1,14 +1,16 @@
 using NUnit;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    
+
     [SerializeField]
+    public static bool IsInventoryExists = false;
     bool jumping = false;
     bool cooldown= false;
     private CharacterController cc;
@@ -31,7 +33,10 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateInventoryLogic();
+        if (IsInventoryExists)
+        {
+            UpdateInventoryLogic();
+        }
         x = health;
         Move();
         if(Input.GetKey(KeyCode.L))
@@ -138,25 +143,24 @@ public class PlayerScript : MonoBehaviour
     }
     private static void UpdateInventoryLogic()
     {
-        var inv = EnemyScript.spawner.inventory;
+        List<GameObject> inv = EnemyScript.spawner.inventory;
         int selection = EnemyScript.spawner.hand;
-        try
-        {
-            
-            GameObject player = GameObject.Find("Player");
-            Activate(inv[selection]);
+        GameObject player = GameObject.Find("Player");
+        Activate(inv[selection]);
 
             // deactivates everything else;
-            if (inv.Count > 1)
+        if (inv.Count > 1)
             {
-                for (int i = 0; i < inv.Count; i++)
+            for (int i = 0; i < inv.Count; i++)
+            {
+                if (selection != i)
                 {
-                    if (selection != i)
-                    {
                         Deactivate(inv[i]);
-                    }
                 }
+                
             }
+            
+        }
             // special cases
             if (inv[selection] == player)
             {
@@ -164,13 +168,12 @@ public class PlayerScript : MonoBehaviour
                 player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
             }
 
-        }
-        catch (Exception)
+        if (NumberPress() < inv.Count)
         {
-            print("Does Not Exist Yet");
+            selection = NumberPress();
+            EnemyScript.spawner.hand = NumberPress();
         }
-        selection = NumberPress();
-        EnemyScript.spawner.hand = NumberPress();
+        
     }
     static int NumberPress()
     {

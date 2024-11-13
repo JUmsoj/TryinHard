@@ -1864,7 +1864,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7981263587f2624aac3d95b74bf0359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumping: 0
   x: 0
   cam: {fileID: 0}
 --- !u!1660057539 &9223372036854775807

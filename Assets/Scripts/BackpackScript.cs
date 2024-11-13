@@ -26,7 +26,8 @@ public class BackpackScript : MonoBehaviour
                   
                     
                  EnemyScript.spawner.inventory.Add(child);
-                    
+
+                 PlayerScript.IsInventoryExists = true;
                 
                  container.Remove(child);
             }
