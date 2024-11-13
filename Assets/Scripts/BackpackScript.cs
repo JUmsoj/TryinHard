@@ -22,10 +22,10 @@ public class BackpackScript : MonoBehaviour
             Debug.Log("touched");
             foreach (GameObject child in new List<GameObject>(container))
             {
-                
-                  
+
+                var player = GameObject.Find("Player").GetComponent<PlayerScript>();
                     
-                 EnemyScript.spawner.inventory.Add(child);
+                 player.Inventory.INVENTORY.Add(child);
 
                  PlayerScript.IsInventoryExists = true;
                 

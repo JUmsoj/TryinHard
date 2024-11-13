@@ -9,7 +9,7 @@ public class Spawner : ScriptableObject
     public int num = 2;
     public GameObject enemy;
     private bool oneatatime = true;
-    public List<GameObject> inventory = new(10);
+    
     private void Awake()
     {
         

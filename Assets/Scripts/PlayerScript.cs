@@ -10,6 +10,7 @@ public class PlayerScript : MonoBehaviour
 {
 
     [SerializeField]
+    public Player Inventory;
     public static bool IsInventoryExists = false;
     bool jumping = false;
     bool cooldown= false;
@@ -21,8 +22,13 @@ public class PlayerScript : MonoBehaviour
     Transform trans;
     public Transform cam;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Awake()
+    {
+        Inventory = ScriptableObject.CreateInstance<Player>();
+    }
     void Start()
     {
+        
         Deactivate(GameObject.Find("sword"));
         cam = GameObject.Find("FreeLook Camera").transform;
         speed = UnityEngine.Random.Range((float)0.5, 1); 
@@ -129,11 +135,11 @@ public class PlayerScript : MonoBehaviour
     }
     public static void Deactivate(GameObject target)
     {
-        GameObject hand = GameObject.Find("Hand");
+        
         
         
             target.SetActive(false);
-            target.transform.parent = null;
+            target.transform.parent = GameObject.FindGameObjectWithTag("Backpack").transform;
             return;
         
         
@@ -143,7 +149,8 @@ public class PlayerScript : MonoBehaviour
     }
     private static void UpdateInventoryLogic()
     {
-        List<GameObject> inv = EnemyScript.spawner.inventory;
+        var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
+        List<GameObject> inv = Player.Inventory.INVENTORY;
         int selection = EnemyScript.spawner.hand;
         GameObject player = GameObject.Find("Player");
         Activate(inv[selection]);
@@ -162,11 +169,10 @@ public class PlayerScript : MonoBehaviour
             
         }
             // special cases
-            if (inv[selection] == player)
-            {
-
-                player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
-            }
+        if (inv[selection] == player)
+        {
+            player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+        }
 
         if (NumberPress() < inv.Count)
         {
@@ -222,24 +228,17 @@ public class PlayerScript : MonoBehaviour
     }
         public static void Activate(GameObject target)
         {
-        var hand = GameObject.Find("Hand");
-        var player = GameObject.Find("Player");
-        target.SetActive(true);
-        if (target.transform.parent == null)
-        {
-            target.transform.rotation = hand.transform.rotation;
-        }
-        target.transform.parent = hand.transform;
-        target.transform.position = hand.transform.position;
-        
-        return;
-        
-
-
-
-
-
-    }
+            var hand = GameObject.Find("Hand");
+            var player = GameObject.Find("Player");
+            target.SetActive(true);
+            if (target.transform.parent == null)
+            {
+                target.transform.rotation = hand.transform.rotation;
+            }
+            target.transform.parent = hand.transform;
+            target.transform.position = hand.transform.position;
+            return;
+       }
     private void OnCollisionEnter(Collision collision)
     {
        if(collision.gameObject.name == "Ground")

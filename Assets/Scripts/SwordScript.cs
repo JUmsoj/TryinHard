@@ -96,8 +96,8 @@ public class SwordScript : MonoBehaviour
     {
         
         GameObject thing = collision.gameObject;
-        
-        if(collision.gameObject.CompareTag("Enemy") && EnemyScript.spawner.inventory[0] == gameObject)
+        var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
+        if(collision.gameObject.CompareTag("Enemy") && Player.Inventory.INVENTORY[0] == gameObject)
         {
             EnemyScript.spawner.count--; 
             Destroy(thing);
