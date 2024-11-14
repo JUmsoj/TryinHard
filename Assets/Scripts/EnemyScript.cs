@@ -19,6 +19,7 @@ public class EnemyScript : MonoBehaviour
     void Awake()
     {
         mr = GetComponent<MeshRenderer>();
+        GetComponent<Rigidbody>().mass *= 7f;
         player = GameObject.Find("Player");
         if (gameObject.name != "Enemy")
         {
@@ -99,23 +100,25 @@ public class EnemyScript : MonoBehaviour
             print("touched player");
             PlayerScript.health--;
         }
-        else if (collision.gameObject.name == "Ground")
+        if (collision.gameObject.name == "Ground")
         {
             touchingground = true;
         }
-        else if (collision.gameObject.name == "Player")
+        if (collision.gameObject.name == "Player")
         {
             if(hascrate)
             {
                 ReCapture();
+                Debug.LogError("Player recaptured crate");
             }
 
         }
         if (collision.gameObject.name == "Cube")
         {
-            if (!hascrate)
+            if (!hascrate && collision.gameObject.transform.parent == null)
             {
                 EnemyCapture(gameObject, collision.gameObject);
+                Debug.LogError("Enemy captured crate");
             }
         }
     }
@@ -144,9 +147,10 @@ public class EnemyScript : MonoBehaviour
     }
     void ReCapture()
     {
-        mr.material = Resources.Load<Material>("Enemy"); var crate = GameObject.Find("Cube");
+        mr.material = Resources.Load<Material>("Enemy"); 
+        var crate = gameObject.transform.GetChild(0).gameObject;
         crate.transform.parent = null;
-        crate.AddComponent<Rigidbody>().AddForce(new Vector3(UnityEngine.Random.Range(5, -5), 0, UnityEngine.Random.Range(5, -5)));
+        crate.GetComponent<Rigidbody>().AddForce(new Vector3(UnityEngine.Random.Range(5, -5), 0, UnityEngine.Random.Range(5, -5)));
         hascrate = false;
         Vector3 Throw = new(0, 0, 0);
         Throw.Set(-5, 0, 5);
