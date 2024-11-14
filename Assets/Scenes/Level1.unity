@@ -969,7 +969,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 14
+  m_Constraints: 0
   m_CollisionDetection: 1
 --- !u!114 &790933831
 MonoBehaviour:
@@ -1046,7 +1046,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 7.9351864, y: 0.64474225, z: 5.01}
-  m_LocalScale: {x: 1, y: 1.3848559, z: -1.1481636}
+  m_LocalScale: {x: 1, y: 1.2137847, z: -1.1481636}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

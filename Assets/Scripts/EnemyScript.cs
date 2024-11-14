@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Threading;
@@ -5,6 +6,8 @@ using UnityEngine;
 
 public class EnemyScript : MonoBehaviour
 {
+    private MeshRenderer mr;
+    public bool hascrate = false;
     public bool active = false;
     private bool touchingground = false;
     public GameObject player;
@@ -15,6 +18,7 @@ public class EnemyScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        mr = GetComponent<MeshRenderer>();
         player = GameObject.Find("Player");
         if (gameObject.name != "Enemy")
         {
@@ -99,7 +103,31 @@ public class EnemyScript : MonoBehaviour
         {
             touchingground = true;
         }
-        
+        else if (collision.gameObject.name == "Player")
+        {
+            if(hascrate)
+            {
+                ReCapture();
+            }
+
+        }
+        if (collision.gameObject.name == "Cube")
+        {
+            if (!hascrate)
+            {
+                EnemyCapture(gameObject, collision.gameObject);
+            }
+        }
+    }
+    void EnemyCapture(GameObject Captor, GameObject crate)
+    {
+        crate.transform.parent = Captor.transform;
+        hascrate = true;
+        crate.transform.position = gameObject.transform.position;
+        crate.transform.Translate(0, 5, 0);
+        mr.material = Resources.Load<Material>("whon");
+        return;
+
     }
     private void OnCollisionExit(Collision collision)
     {
@@ -114,9 +142,21 @@ public class EnemyScript : MonoBehaviour
         }
        
     }
-
+    void ReCapture()
+    {
+        mr.material = Resources.Load<Material>("Enemy"); var crate = GameObject.Find("Cube");
+        crate.transform.parent = null;
+        crate.AddComponent<Rigidbody>().AddForce(new Vector3(UnityEngine.Random.Range(5, -5), 0, UnityEngine.Random.Range(5, -5)));
+        hascrate = false;
+        Vector3 Throw = new(0, 0, 0);
+        Throw.Set(-5, 0, 5);
+        Throw *= Time.deltaTime;
+        Throw.Normalize();
+        rb.AddForce(Throw);    
+    }
     internal int NumberPress()
     {
         throw new NotImplementedException();
     }
+    
 }
