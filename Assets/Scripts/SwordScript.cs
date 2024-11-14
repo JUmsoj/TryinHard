@@ -4,12 +4,16 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.WSA;
 
 public class SwordScript : MonoBehaviour
 {
-    bool to = true;
     // private string[] attacks;
-    readonly int speed = 5;
+    
+    private static List<GameObject> inv;
+    private static int selection;
+    private Animator anim;
+    
     Quaternion rotate;
     private int directionx;
     private int directionz;
@@ -19,40 +23,43 @@ public class SwordScript : MonoBehaviour
     private MeshCollider Collider;
 
     // Start is called before the first frame update
-   
+    
     void Start()
     {
-        
+        anim = GetComponent<Animator>();
+        // set this at every Weapon script
+
+
         /*
          * 
          * attacks[0] = "Sword";
         attacks[1] = "Sharp" + attacks[0];
         print(attacks[0]);*/
+        
         gameObject.transform.parent = GameObject.Find("Player").transform;
         Collider = gameObject.AddComponent<MeshCollider>();
         Collider.convex = true;
         Collider.sharedMesh = gameObject.GetOrAddComponent<MeshFilter>().mesh;
         rb = gameObject.AddComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezePositionY;
+        
         rb.isKinematic = true;
         print($"{gameObject.name}Object Created");
+        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(threw)
+
+
+
+        if (threw)
         {
             gameObject.transform.Translate(move);
         }
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            Turn("h");
-        }
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            Turn("v");
-        }
+     
+        
         if (Input.GetKeyDown(KeyCode.T) && !threw)
         {
             print("ht");
@@ -61,30 +68,41 @@ public class SwordScript : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
-            Turn("h");
+            anim.SetTrigger("Hit");
         }
-        if (Input.GetMouseButton(1))
+        
+        if(Input.GetAxis("turn") != 0)
         {
-            rotate = Quaternion.identity;
-            gameObject.transform.rotation = rotate;
+            gameObject.transform.Rotate(new Vector3(0, 0, 90 * Input.GetAxis("turn")));
+            print($"Turned {90 * Input.GetAxis("turn")} Degrees");
         }
+        
+       
     }
-    private void Turn(string direction)
+    public void Hit()
     {
-        if(direction == "h")
+        GameObject Hand = GameObject.Find("Hand");
+        gameObject.transform.rotation = Hand.transform.rotation;
+        for (int i = 0; i < 5; i++)
         {
-            rotate = new (45 * Input.GetAxis("switch") * speed, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
-            directionx = 5;
-            gameObject.transform.rotation = rotate;
-            
+            gameObject.transform.Translate(new Vector3( 0, 0, Hand.transform.position.z + 5));
         }
-        else if (direction == "v")
+       
+        StartCoroutine(wait());
+        for (int i = 0; i < 5; i++)
         {
-            rotate = new(Quaternion.identity.x, speed * 45 * Input.GetAxis("rotation") , Quaternion.identity.z*speed * 45 * Input.GetAxis("rotation"), Quaternion.identity.w);
-            directionz = 5;
-            gameObject.transform.rotation = rotate;
+            gameObject.transform.Translate(0, 0, Hand.transform.position.z -5);
         }
+
+
+    } 
+    private IEnumerator wait()
+    {
+        yield return new WaitForSeconds(2);
+
+        yield break;
     }
+
     private int Throw()
     {
         gameObject.transform.parent = null;
@@ -98,14 +116,19 @@ public class SwordScript : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-
+        
         GameObject thing = collision.gameObject;
-        if(collision.gameObject.CompareTag("Enemy") && to)
+        var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
+        if(collision.gameObject.CompareTag("Enemy") && Player.Inventory.INVENTORY[0] == gameObject)
         {
+            EnemyScript.spawner.count--; 
             Destroy(thing);
         }
         Debug.Log($"Destroyed {thing.name}");
         return;
     }
+   
+    
+    
 
 }
