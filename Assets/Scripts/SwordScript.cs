@@ -23,7 +23,7 @@ public class SwordScript : MonoBehaviour
     private MeshCollider Collider;
 
     // Start is called before the first frame update
-   
+    
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -52,8 +52,8 @@ public class SwordScript : MonoBehaviour
     void Update()
     {
 
-        
-        
+
+
         if (threw)
         {
             gameObject.transform.Translate(move);
@@ -70,7 +70,7 @@ public class SwordScript : MonoBehaviour
         {
             anim.SetTrigger("Hit");
         }
-       
+        
         if(Input.GetAxis("turn") != 0)
         {
             gameObject.transform.Rotate(new Vector3(0, 0, 90 * Input.GetAxis("turn")));
@@ -79,8 +79,30 @@ public class SwordScript : MonoBehaviour
         
        
     }
-   
-   
+    public void Hit()
+    {
+        GameObject Hand = GameObject.Find("Hand");
+        gameObject.transform.rotation = Hand.transform.rotation;
+        for (int i = 0; i < 5; i++)
+        {
+            gameObject.transform.Translate(new Vector3( 0, 0, Hand.transform.position.z + 5));
+        }
+       
+        StartCoroutine(wait());
+        for (int i = 0; i < 5; i++)
+        {
+            gameObject.transform.Translate(0, 0, Hand.transform.position.z -5);
+        }
+
+
+    } 
+    private IEnumerator wait()
+    {
+        yield return new WaitForSeconds(2);
+
+        yield break;
+    }
+
     private int Throw()
     {
         gameObject.transform.parent = null;

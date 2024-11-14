@@ -231,7 +231,7 @@ public class PlayerScript : MonoBehaviour
             var hand = GameObject.Find("Hand");
             var player = GameObject.Find("Player");
             target.SetActive(true);
-            if (target.transform.parent == null)
+            if (target.transform.parent == player.transform.GetChild(1).gameObject)
             {
                 target.transform.rotation = hand.transform.rotation;
             }
