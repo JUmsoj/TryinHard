@@ -11,7 +11,9 @@ public class ProGen : MonoBehaviour
     [Header("Possible values for generation")]
     static GameObject a, b, c;
     [SerializeField] GameObject[] spawned = new GameObject[10];
-    
+    [SerializeField] GameObject[] Tiles;
+
+
     [SerializeField] GameObject[] pool = new GameObject[3];
   
 
@@ -19,15 +21,18 @@ public class ProGen : MonoBehaviour
    
     void Awake()
     {
-
-
+        Tiles = new GameObject[gameObject.transform.childCount];
+        for (int i = 0; i < Tiles.Length; i++)
+        {
+            Tiles[i] = gameObject.transform.GetChild(i).gameObject;
+        }
         var player = GameObject.Find("Player");
         start = player.transform.position;
     }
 
     void Generate()
     {
-        var Tiles = GameObject.FindGameObjectsWithTag("Finish");
+        
         for (int i = 0; i < spawned.Length; i++)
         {
             try 
@@ -40,7 +45,7 @@ public class ProGen : MonoBehaviour
                 GenerateOne(position, gameObject.transform.rotation, SelectedTile);
             }
 
-            catch (Exception e)
+            catch (Exception)
             {
                 return;
             }

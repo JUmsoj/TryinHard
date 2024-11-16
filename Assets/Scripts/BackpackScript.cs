@@ -12,6 +12,16 @@ public class BackpackScript : MonoBehaviour
         container.Add(GameObject.Find("sword"));
         container.Add(new GameObject("bow"));
     }
+    private void Update()
+    {
+        if(Vector3.Distance(gameObject.transform.position, GameObject.Find("Player").transform.position) < 15)
+        {
+            if(Input.GetKeyDown(KeyCode.E))
+            {
+                PlayerCapture();
+            }
+        }
+    }
     void PlayerCapture()
     {
         Debug.Log("touched");
@@ -28,16 +38,8 @@ public class BackpackScript : MonoBehaviour
         }
         Destroy(gameObject);
     }
-   
+    
     // Update is called once per frame
-    private void OnCollisionEnter(Collision collision)
-    {
-       
-        if (collision.gameObject.name == "Player")
-        {
-            PlayerCapture();
-        }
-        
-    }
+    
 
 }

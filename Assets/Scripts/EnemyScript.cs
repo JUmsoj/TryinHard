@@ -84,6 +84,7 @@ public class EnemyScript : MonoBehaviour
         if (touchingground && gameObject.name != "Enemy")
         {
             rb.transform.position = Vector3.MoveTowards(gameObject.transform.position, player.transform.position, Time.deltaTime * 5);
+
         }
         if(touchingplayer && !active)
         {
@@ -100,9 +101,10 @@ public class EnemyScript : MonoBehaviour
             print("touched player");
             PlayerScript.health--;
         }
-        if (collision.gameObject.name == "Ground")
-        {
+        if (collision.gameObject.CompareTag("Tile"))
+        { 
             touchingground = true;
+            print("Yes");
         }
         if (collision.gameObject.name == "Player")
         {
@@ -139,7 +141,7 @@ public class EnemyScript : MonoBehaviour
             touchingplayer = false;
             PlayerScript.health--;
         }
-        else if(collision.gameObject.name == "Ground")
+        if(collision.gameObject.CompareTag("Floor"))
         {
             touchingground = false;
         }
