@@ -7,6 +7,9 @@ TagManager:
   - Enemy
   - Container
   - Backpack
+  - Tile
+  - Floor
+  - Section
   layers:
   - Default
   - TransparentFX

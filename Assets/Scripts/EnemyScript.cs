@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Threading;
@@ -5,6 +6,8 @@ using UnityEngine;
 
 public class EnemyScript : MonoBehaviour
 {
+    private MeshRenderer mr;
+    public bool hascrate = false;
     public bool active = false;
     private bool touchingground = false;
     public GameObject player;
@@ -15,6 +18,8 @@ public class EnemyScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        mr = GetComponent<MeshRenderer>();
+        GetComponent<Rigidbody>().mass *= 7f;
         player = GameObject.Find("Player");
         if (gameObject.name != "Enemy")
         {
@@ -79,6 +84,7 @@ public class EnemyScript : MonoBehaviour
         if (touchingground && gameObject.name != "Enemy")
         {
             rb.transform.position = Vector3.MoveTowards(gameObject.transform.position, player.transform.position, Time.deltaTime * 5);
+
         }
         if(touchingplayer && !active)
         {
@@ -95,11 +101,38 @@ public class EnemyScript : MonoBehaviour
             print("touched player");
             PlayerScript.health--;
         }
-        else if (collision.gameObject.name == "Ground")
-        {
+        if (collision.gameObject.CompareTag("Tile"))
+        { 
             touchingground = true;
+            print("Yes");
         }
-        
+        if (collision.gameObject.name == "Player")
+        {
+            if(hascrate)
+            {
+                ReCapture();
+                Debug.LogError("Player recaptured crate");
+            }
+
+        }
+        if (collision.gameObject.name == "Cube")
+        {
+            if (!hascrate && collision.gameObject.transform.parent == null)
+            {
+                EnemyCapture(gameObject, collision.gameObject);
+                Debug.LogError("Enemy captured crate");
+            }
+        }
+    }
+    void EnemyCapture(GameObject Captor, GameObject crate)
+    {
+        crate.transform.parent = Captor.transform;
+        hascrate = true;
+        crate.transform.position = gameObject.transform.position;
+        crate.transform.Translate(0, 5, 0);
+        mr.material = Resources.Load<Material>("whon");
+        return;
+
     }
     private void OnCollisionExit(Collision collision)
     {
@@ -108,15 +141,28 @@ public class EnemyScript : MonoBehaviour
             touchingplayer = false;
             PlayerScript.health--;
         }
-        else if(collision.gameObject.name == "Ground")
+        if(collision.gameObject.CompareTag("Floor"))
         {
             touchingground = false;
         }
        
     }
-
+    void ReCapture()
+    {
+        mr.material = Resources.Load<Material>("Enemy"); 
+        var crate = gameObject.transform.GetChild(0).gameObject;
+        crate.transform.parent = null;
+        crate.GetComponent<Rigidbody>().AddForce(new Vector3(UnityEngine.Random.Range(5, -5), 0, UnityEngine.Random.Range(5, -5)));
+        hascrate = false;
+        Vector3 Throw = new(0, 0, 0);
+        Throw.Set(-5, 0, 5);
+        Throw *= Time.deltaTime;
+        Throw.Normalize();
+        rb.AddForce(Throw);    
+    }
     internal int NumberPress()
     {
         throw new NotImplementedException();
     }
+    
 }

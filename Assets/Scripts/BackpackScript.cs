@@ -12,27 +12,34 @@ public class BackpackScript : MonoBehaviour
         container.Add(GameObject.Find("sword"));
         container.Add(new GameObject("bow"));
     }
-
-    // Update is called once per frame
-    private void OnCollisionEnter(Collision collision)
+    private void Update()
     {
-       
-        if (collision.gameObject.name == "Player")
+        if(Vector3.Distance(gameObject.transform.position, GameObject.Find("Player").transform.position) < 15)
         {
-            Debug.Log("touched");
-            foreach (GameObject child in new List<GameObject>(container))
+            if(Input.GetKeyDown(KeyCode.E))
             {
-
-                var player = GameObject.Find("Player").GetComponent<PlayerScript>();
-                    
-                 player.Inventory.INVENTORY.Add(child);
-
-                 PlayerScript.IsInventoryExists = true;
-                
-                 container.Remove(child);
+                PlayerCapture();
             }
-            Destroy(gameObject);
         }
     }
+    void PlayerCapture()
+    {
+        Debug.Log("touched");
+        foreach (GameObject child in new List<GameObject>(container))
+        {
+
+            var player = GameObject.Find("Player").GetComponent<PlayerScript>();
+
+            player.Inventory.INVENTORY.Add(child);
+
+            PlayerScript.IsInventoryExists = true;
+
+            container.Remove(child);
+        }
+        Destroy(gameObject);
+    }
+    
+    // Update is called once per frame
+    
 
 }
