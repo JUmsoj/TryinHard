@@ -112,6 +112,24 @@ public class ProGen : MonoBehaviour
         UpdateTiles();
         
         Generate();
+        if(Vector3.Distance(gameObject.transform.position, GameObject.Find("Player").transform.position) > 50)
+        {
+            foreach(var item in Tiles)
+            {
+                item.GetComponent<MeshRenderer>().enabled = false;  
+                item.GetComponent<MeshCollider>().enabled = false;
+               
+            }
+        }
+        else
+        {
+            foreach (var item in Tiles)
+            {
+                item.GetComponent<MeshRenderer>().enabled = true;
+                item.GetComponent<MeshCollider>().enabled = true;
+                
+            }
+        }
        
     }
 }
