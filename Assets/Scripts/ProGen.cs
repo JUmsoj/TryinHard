@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class ProGen : MonoBehaviour
 {
+    Vector3 pos;
     bool touchingGround = false;
     [Header("Procedural Generation Parameters")]
     [SerializeField] Vector3 start;
     [Header("Possible values for generation")]
-    static GameObject a, b, c;
+    
     [SerializeField] GameObject[] spawned = new GameObject[10];
     [SerializeField] GameObject[] Tiles;
 
@@ -18,10 +19,8 @@ public class ProGen : MonoBehaviour
   
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-   
-    void Awake()
+    void UpdateTiles()
     {
-        Tiles = new GameObject[gameObject.transform.childCount];
         for (int i = 0; i < Tiles.Length; i++)
         {
             Tiles[i] = gameObject.transform.GetChild(i).gameObject;
@@ -29,26 +28,29 @@ public class ProGen : MonoBehaviour
         var player = GameObject.Find("Player");
         start = player.transform.position;
     }
+    void Awake()
+    {
+        Tiles = new GameObject[gameObject.transform.childCount];
+        UpdateTiles();  
+    }
 
     void Generate()
     {
         
         for (int i = 0; i < spawned.Length; i++)
         {
-            try 
+            try
             {
                 var SelectedTile = Tiles[UnityEngine.Random.Range(0, Tiles.Length - 1)];
-                var position = SelectedTile.transform.position;
-
-
-
-                GenerateOne(position, gameObject.transform.rotation, SelectedTile);
+                pos = SelectedTile.transform.position;
+                GenerateOne(pos, gameObject.transform.rotation, SelectedTile);
             }
-
             catch (Exception)
             {
-                return;
+                print("No Objects to Instansiate");
             }
+
+            
             
             
         }
@@ -67,9 +69,9 @@ public class ProGen : MonoBehaviour
         }
         else
         {
-            var Tiles = GameObject.FindGameObjectsWithTag("Finish");
+            Tiles = GameObject.FindGameObjectsWithTag("Finish");
             var newtile = Tiles[UnityEngine.Random.Range(0, Tiles.Length)];
-            position = newtile.transform.position + start;
+            pos= newtile.transform.position + start;
             return;
         }
             
@@ -107,8 +109,9 @@ public class ProGen : MonoBehaviour
 
     void Update()
     {
-        var player = GameObject.Find("Player");
+        UpdateTiles();
+        
         Generate();
-        start = player.transform.position + gameObject.transform.position;
+       
     }
 }
