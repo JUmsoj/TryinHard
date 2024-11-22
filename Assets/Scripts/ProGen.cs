@@ -17,9 +17,16 @@ public class ProGen : MonoBehaviour
 
 
     [SerializeField] GameObject[] pool = new GameObject[3];
-  
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public void ChangeTiles(Material m)
+    {
+        foreach (var t in Tiles)
+        {
+            t.GetComponent<MeshRenderer>().sharedMaterial = m;
+        }
+    }
     void UpdateTiles()
     {
         for (int i = 0; i < Tiles.Length; i++)
