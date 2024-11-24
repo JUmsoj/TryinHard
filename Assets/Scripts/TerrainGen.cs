@@ -134,7 +134,12 @@ public class TerrainGen : MonoBehaviour
         for (int i = 0; i <= 1000;i++) 
         {
             targetpos = walker.GetComponent<WalkerScript>().SimulateMove(1);
-            
+            if(Sec(targetpos) != null)
+            {
+                walker.transform.position = targetpos;
+                Sec(targetpos).GetComponent<ProGen>().WalkerOn();
+
+            }
             else
             {
                 Debug.LogWarning(targetpos);
@@ -145,6 +150,11 @@ public class TerrainGen : MonoBehaviour
                 {
                     walker.transform.position = targetpos;
                     Sec(targetpos).GetComponent<ProGen>().WalkerOn();
+
+                }
+                else
+                {
+                    targetpos = walker.GetComponent<WalkerScript>().Visited.Last().transform.position;
                 }
             }
 
