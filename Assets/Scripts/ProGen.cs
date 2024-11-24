@@ -1,10 +1,15 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ProGen : MonoBehaviour
 {
+    bool thing;
+    
     private Mesh mesh;
     Vector3 pos;
     bool touchingGround = false;
@@ -14,19 +19,29 @@ public class ProGen : MonoBehaviour
     [SerializeField] CombineInstance[] meshes;
     [SerializeField] GameObject[] spawned = new GameObject[10];
     [SerializeField] GameObject[] Tiles;
-
-
+    
+    [SerializeField] Material biome;
     [SerializeField] GameObject[] pool = new GameObject[3];
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // Start is called once before the first execution
+    // of Update after the MonoBehaviour is created
+   
+    public void WalkerOn()
+    {
+        Debug.LogWarning(gameObject.name);
+        ChangeTiles(gameObject.GetComponentInParent<TerrainGen>().biomes[0]);
+        gameObject.GetComponentInParent<TerrainGen>().walker.GetComponent<WalkerScript>().Visited.Add(gameObject);
+    }
     public void ChangeTiles(Material m)
     {
         foreach (var t in Tiles)
         {
             t.GetComponent<MeshRenderer>().sharedMaterial = m;
+            biome = m;
         }
     }
+    
     void UpdateTiles()
     {
         for (int i = 0; i < Tiles.Length; i++)
@@ -147,7 +162,7 @@ public class ProGen : MonoBehaviour
         UpdateTiles();
         
         Generate();
-        ChunkRender();
+        
         
        
     }
