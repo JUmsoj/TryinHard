@@ -130,11 +130,23 @@ public class TerrainGen : MonoBehaviour
         walker = new GameObject("Walker", typeof(WalkerScript));
         walker.transform.position = touching.transform.position;
         walker.transform.parent = gameObject.transform;
+        CreateAndMove(1000);
+        return;
         
-        for (int i = 0; i <= 1000;i++) 
+        
+
+
+    }
+    void CreateAndMove(int permutations)
+    {
+        for (int i = 0; i <= permutations; i++)
         {
+
+
+
+
             targetpos = walker.GetComponent<WalkerScript>().SimulateMove(1);
-            if(Sec(targetpos) != null)
+            if (Sec(targetpos) != null)
             {
                 walker.transform.position = targetpos;
                 Sec(targetpos).GetComponent<ProGen>().WalkerOn();
@@ -142,8 +154,7 @@ public class TerrainGen : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning(targetpos);
-                Debug.LogWarning(Sec(targetpos));
+
                 targetpos.x *= -1;
                 targetpos.z *= -1;
                 if (Sec(targetpos) != null)
@@ -154,15 +165,13 @@ public class TerrainGen : MonoBehaviour
                 }
                 else
                 {
-                    targetpos = walker.GetComponent<WalkerScript>().Visited.Last().transform.position;
+                    walker.GetComponent<WalkerScript>().Visited.Remove(walker.GetComponent<WalkerScript>().Visited.Last());
+                    walker.transform.position = walker.GetComponent<WalkerScript>().Visited.Last().transform.position;
+                    i--;
+                    continue;
                 }
             }
-
-           
         }
-        
-
-
     }
     GameObject Sec(Vector3 target)
     {
