@@ -1,16 +1,26 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 public class WalkerScript : MonoBehaviour
 {
     [SerializeField] Vector3 __1__;
     [SerializeField] Vector3 __2__;
     public List<GameObject> Visited = new List<GameObject>();
-    int[] Randoms = new int[] {-80, 80,0, -40, 40,0};
+    int[] Randoms = new int[] {80, 40};
+    int[] negatives = new int[2] {1, -1};
+    int movex;
+    int movey;
     public Vector3 SimulateMove(int negative) 
     {
-        int movex = Randoms[UnityEngine.Random.Range(0, 2)] * negative;
-        int movey = Randoms[UnityEngine.Random.Range(3, 5)] * negative;
-        
+        if (Randoms[UnityEngine.Random.Range(0, 1)] == 80)
+        {
+             movex = 80 * negative * negatives[UnityEngine.Random.Range(0, 1)];
+        }
+        else
+        {
+             movey = 40 * negative * negatives[UnityEngine.Random.Range(0, 1)];
+        }
+        print(new Vector3(gameObject.transform.position.x + movex, 0, gameObject.transform.position.z + movey));
         return new Vector3(gameObject.transform.position.x + movex,0, gameObject.transform.position.z + movey);
       
         

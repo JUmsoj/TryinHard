@@ -127,9 +127,11 @@ public class TerrainGen : MonoBehaviour
     {
         touching = gameObject.transform.GetChild(61).gameObject;
         other = gameObject.transform.GetChild(97).gameObject;
+
         walker = new GameObject("Walker", typeof(WalkerScript));
         walker.transform.position = touching.transform.position;
         walker.transform.parent = gameObject.transform;
+        touching.GetComponent<ProGen>().WalkerOn();
         CreateAndMove(1000);
         return;
         
@@ -139,12 +141,10 @@ public class TerrainGen : MonoBehaviour
     }
     void CreateAndMove(int permutations)
     {
-        for (int i = 0; i <= permutations; i++)
+        while(walker.GetComponent<WalkerScript>().Visited.Count < Sectors.Count())
         {
-
-
-
-
+            
+            var Visited = walker.GetComponent<WalkerScript>().Visited;
             targetpos = walker.GetComponent<WalkerScript>().SimulateMove(1);
             if (Sec(targetpos) != null)
             {
@@ -155,8 +155,8 @@ public class TerrainGen : MonoBehaviour
             else
             {
 
-                targetpos.x *= -1;
-                targetpos.z *= -1;
+                targetpos.x *= UnityEngine.Random.Range(-1, 1);
+                targetpos.z *= UnityEngine.Random.Range(-1,1);
                 if (Sec(targetpos) != null)
                 {
                     walker.transform.position = targetpos;
@@ -165,13 +165,72 @@ public class TerrainGen : MonoBehaviour
                 }
                 else
                 {
-                    walker.GetComponent<WalkerScript>().Visited.Remove(walker.GetComponent<WalkerScript>().Visited.Last());
-                    walker.transform.position = walker.GetComponent<WalkerScript>().Visited.Last().transform.position;
-                    i--;
+                    if(ValidNeighbor(walker.transform.position) != null)
+                    {
+                        ValidNeighbor(walker.transform.position).GetComponent<ProGen>().WalkerOn();
+                        targetpos = ValidNeighbor(walker.transform.position).transform.position;
+                        walker.transform.position = targetpos;
+                        
+                    }
+                    else if (Visited.Count() >= 1)
+                    {
+                        walker.transform.position = Visited[Visited.Count() - 1].transform.position;
+                        Visited.Remove(Visited.Last());
+                        
+                    }
+
+                    
                     continue;
                 }
             }
         }
+    }
+    GameObject ValidNeighbor(Vector3 thing)
+    {
+        Vector3 temp = thing;
+        var l = walker.GetComponent<Transform>().position;
+        Vector3 Left()
+        {
+            temp.x = l.x + 0;
+            temp.z = l.z - 40;
+            return temp;
+        }
+        Vector3 Right()
+        {
+            temp.x = l.x + 0;
+            temp.z = l.z + 40;
+            return temp;
+        }
+        Vector3 Up()
+        {
+            temp.x = l.x + 80;
+            temp.z = l.z + 0;
+            return temp;
+            
+        }
+        Vector3 Down()
+        {
+            temp.x = l.x - 80;
+            temp.z = l.z + 0;
+            return temp;
+        }
+        var x = new Func<Vector3>[] {() => Left(), () => Right(), () => Down(), () => Up()};
+        var checkedout = new List<Func<Vector3>>();
+        while(checkedout.Count < x.Count())
+        {
+            var select = x[UnityEngine.Random.Range(0, x.Length)];
+            if(!checkedout.Contains(select) && Sec(select()) != null)
+            {
+                return Sec(select());
+            }
+            else if(!checkedout.Contains(select))
+            {
+                checkedout.Add(select);
+            }
+        }
+        return null;
+        
+        
     }
     GameObject Sec(Vector3 target)
     {
