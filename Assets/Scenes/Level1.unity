@@ -1277,7 +1277,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   other: {fileID: 0}
-  walker: {fileID: 0}
   touching: {fileID: 0}
   count: 0
   Sectors: []

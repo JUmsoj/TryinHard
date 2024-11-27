@@ -13,7 +13,7 @@ public class TerrainGen : MonoBehaviour
 {
     public GameObject other;
     Vector3 targetpos;
-    public GameObject walker;
+    
      public GameObject touching;
     public int count;
     public GameObject[] Sectors;
@@ -28,7 +28,7 @@ public class TerrainGen : MonoBehaviour
     void Start()
     {
         Sort();
-        WorldGen();
+        WorldGen(Sectors[UnityEngine.Random.Range(1, Sectors.Length)]);
     }
 
 
@@ -123,33 +123,34 @@ public class TerrainGen : MonoBehaviour
         // free the memory
     }
    
-    void WorldGen()
+    void WorldGen(GameObject start)
     {
-        touching = gameObject.transform.GetChild(61).gameObject;
+        touching = start;
         other = gameObject.transform.GetChild(97).gameObject;
 
-        walker = new GameObject("Walker", typeof(WalkerScript));
+        var walker = new GameObject("Walker", typeof(WalkerScript));
         walker.transform.position = touching.transform.position;
         walker.transform.parent = gameObject.transform;
-        touching.GetComponent<ProGen>().WalkerOn();
-        CreateAndMove(1000);
+        touching.GetComponent<ProGen>().WalkerOn(walker);
+        CreateAndMove(1000!, walker);
         return;
         
         
 
 
     }
-    void CreateAndMove(int permutations)
+    void CreateAndMove(int permutations, GameObject walker)
     {
-        while(walker.GetComponent<WalkerScript>().Visited.Count < Sectors.Count())
+        
+        for(int i = 0;i<permutations;i++)
         {
             
             var Visited = walker.GetComponent<WalkerScript>().Visited;
             targetpos = walker.GetComponent<WalkerScript>().SimulateMove(1);
-            if (Sec(targetpos) != null)
+            if (Sec(targetpos, walker) != null)
             {
                 walker.transform.position = targetpos;
-                Sec(targetpos).GetComponent<ProGen>().WalkerOn();
+                Sec(targetpos, walker).GetComponent<ProGen>().WalkerOn(walker);
 
             }
             else
@@ -157,18 +158,19 @@ public class TerrainGen : MonoBehaviour
 
                 targetpos.x *= UnityEngine.Random.Range(-1, 1);
                 targetpos.z *= UnityEngine.Random.Range(-1,1);
-                if (Sec(targetpos) != null)
+                if (Sec(targetpos, walker) != null)
                 {
                     walker.transform.position = targetpos;
-                    Sec(targetpos).GetComponent<ProGen>().WalkerOn();
+                    Sec(targetpos, walker).GetComponent<ProGen>().WalkerOn(walker);
 
                 }
                 else
                 {
-                    if(ValidNeighbor(walker.transform.position) != null)
+                    var neighbor = ValidNeighbor(walker.transform.position, walker);
+                    if (neighbor != null)
                     {
-                        ValidNeighbor(walker.transform.position).GetComponent<ProGen>().WalkerOn();
-                        targetpos = ValidNeighbor(walker.transform.position).transform.position;
+                        neighbor.GetComponent<ProGen>().WalkerOn(walker);
+                        targetpos = neighbor.transform.position;
                         walker.transform.position = targetpos;
                         
                     }
@@ -185,7 +187,7 @@ public class TerrainGen : MonoBehaviour
             }
         }
     }
-    GameObject ValidNeighbor(Vector3 thing)
+    GameObject ValidNeighbor(Vector3 thing, GameObject walker)
     {
         Vector3 temp = thing;
         var l = walker.GetComponent<Transform>().position;
@@ -219,9 +221,9 @@ public class TerrainGen : MonoBehaviour
         while(checkedout.Count < x.Count())
         {
             var select = x[UnityEngine.Random.Range(0, x.Length)];
-            if(!checkedout.Contains(select) && Sec(select()) != null)
+            if(!checkedout.Contains(select) && Sec(select(), walker) != null)
             {
-                return Sec(select());
+                return Sec(select(), walker);
             }
             else if(!checkedout.Contains(select))
             {
@@ -232,7 +234,7 @@ public class TerrainGen : MonoBehaviour
         
         
     }
-    GameObject Sec(Vector3 target)
+    GameObject Sec(Vector3 target, GameObject walker)
     {
         foreach (var item in Sectors)
         {

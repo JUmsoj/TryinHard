@@ -27,11 +27,11 @@ public class ProGen : MonoBehaviour
     // Start is called once before the first execution
     // of Update after the MonoBehaviour is created
    
-    public void WalkerOn()
+    public void WalkerOn(GameObject walker)
     {
         Debug.LogWarning(gameObject.name);
         ChangeTiles(gameObject.GetComponentInParent<TerrainGen>().biomes[0]);
-        gameObject.GetComponentInParent<TerrainGen>().walker.GetComponent<WalkerScript>().Visited.Add(gameObject);
+        walker.GetComponent<WalkerScript>().Visited.Add(gameObject);
     }
     public void ChangeTiles(Material m)
     {
