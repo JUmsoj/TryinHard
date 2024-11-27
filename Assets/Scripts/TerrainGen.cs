@@ -123,7 +123,16 @@ public class TerrainGen : MonoBehaviour
         }
         // free the memory
     }
-   
+    void UpdateBiome(bool y) {
+        if(y) {
+            // change the biome of the  current thing
+            thing++;
+            if(thing >= 2) 
+            {
+                thing = 0;
+            }
+        }
+    }
     void WorldGen(GameObject start)
     {
         touching = start;
@@ -157,15 +166,7 @@ public class TerrainGen : MonoBehaviour
             }
             if (Sec(targetpos, walker) != null)
             {
-                if (x)
-                {
-                    thing++;
-                    if (thing >= 2)
-                    {
-                        thing = 0;
-                    }
-
-                }
+                UpdateBiome(x);
                 walker.transform.position = targetpos;
                 Sec(targetpos, walker).GetComponent<ProGen>().WalkerOn(walker);
                 
@@ -187,15 +188,7 @@ public class TerrainGen : MonoBehaviour
         targetpos.z *= UnityEngine.Random.Range(-1, 1);
         if (Sec(targetpos, walker) != null)
         {
-            if (stuff)
-            {
-                thing++;
-                if (thing >= 2)
-                {
-                    thing = 0;
-                }
-
-            }
+            UpdateBiome(stuff);
             walker.transform.position = targetpos;
             Sec(targetpos, walker).GetComponent<ProGen>().WalkerOn(walker);
             
@@ -209,15 +202,7 @@ public class TerrainGen : MonoBehaviour
                 neighbor.GetComponent<ProGen>().WalkerOn(walker);
                 targetpos = neighbor.transform.position;
                 walker.transform.position = targetpos;
-                if(stuff)
-                {
-                    thing++;
-                    if (thing >= 2)
-                    {
-                        thing = 0;
-                    }
-                    
-                }
+                UpdateBiome(stuff);
             }
             else if (Visited.Count() >= 1)
             {
