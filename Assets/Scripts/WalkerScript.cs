@@ -12,15 +12,10 @@ public class WalkerScript : MonoBehaviour
     int movey;
     public Vector3 SimulateMove(int negative) 
     {
-        if (Randoms[UnityEngine.Random.Range(0, 1)] == 80)
-        {
-             movex = 80 * negative * negatives[UnityEngine.Random.Range(0, 1)];
-        }
-        else
-        {
-             movey = 40 * negative * negatives[UnityEngine.Random.Range(0, 1)];
-        }
-        print(new Vector3(gameObject.transform.position.x + movex, 0, gameObject.transform.position.z + movey));
+        if (Randoms[UnityEngine.Random.Range(0, 1)] == 80) movex = 80 * negative * negatives[UnityEngine.Random.Range(0, 1)];
+        
+        else movey = 40 * negative * negatives[UnityEngine.Random.Range(0, 1)];
+        
         return new Vector3(gameObject.transform.position.x + movex,0, gameObject.transform.position.z + movey);
       
         

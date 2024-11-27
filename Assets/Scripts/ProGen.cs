@@ -29,8 +29,8 @@ public class ProGen : MonoBehaviour
    
     public void WalkerOn(GameObject walker)
     {
-        Debug.LogWarning(gameObject.name);
-        ChangeTiles(gameObject.GetComponentInParent<TerrainGen>().biomes[0]);
+       
+        ChangeTiles(gameObject.GetComponentInParent<TerrainGen>().biomes[gameObject.GetComponentInParent<TerrainGen>().thing]);
         walker.GetComponent<WalkerScript>().Visited.Add(gameObject);
     }
     public void ChangeTiles(Material m)

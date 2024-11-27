@@ -13,7 +13,7 @@ public class TerrainGen : MonoBehaviour
 {
     public GameObject other;
     Vector3 targetpos;
-    
+    private List<GameObject> walkers = new List<GameObject>();
      public GameObject touching;
     public int count;
     public GameObject[] Sectors;
@@ -24,6 +24,7 @@ public class TerrainGen : MonoBehaviour
     public Material[] biomes;
     // 5 biomes and ten different rotations;
     public Quaternion[] rotations = new Quaternion[10];
+    public int thing;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -102,7 +103,7 @@ public class TerrainGen : MonoBehaviour
             try
             {
                 nums[i] = int.Parse(l);
-                print(l);
+                
             }
             catch (Exception)
             {
@@ -132,59 +133,101 @@ public class TerrainGen : MonoBehaviour
         walker.transform.position = touching.transform.position;
         walker.transform.parent = gameObject.transform;
         touching.GetComponent<ProGen>().WalkerOn(walker);
-        CreateAndMove(1000!, walker);
+        walkers.Add(walker);
+        CreateAndMove(1000!, walkers.IndexOf(walker));
         return;
         
         
 
 
     }
-    void CreateAndMove(int permutations, GameObject walker)
+    void CreateAndMove(int permutations, int index)
     {
         
         for(int i = 0;i<permutations;i++)
         {
             
+            var walker = walkers[Mathf.Min(index, walkers.Count())];
             var Visited = walker.GetComponent<WalkerScript>().Visited;
+            bool x = false;
             targetpos = walker.GetComponent<WalkerScript>().SimulateMove(1);
+            if (i % 5 == 0)
+            {
+                 x = true;
+            }
             if (Sec(targetpos, walker) != null)
             {
+                if (x)
+                {
+                    thing++;
+                    if (thing >= 2)
+                    {
+                        thing = 0;
+                    }
+
+                }
                 walker.transform.position = targetpos;
                 Sec(targetpos, walker).GetComponent<ProGen>().WalkerOn(walker);
-
+                
             }
+
+            
             else
             {
-
-                targetpos.x *= UnityEngine.Random.Range(-1, 1);
-                targetpos.z *= UnityEngine.Random.Range(-1,1);
-                if (Sec(targetpos, walker) != null)
+                FallBack(index, x);
+                
+            }
+        }
+    }
+    void FallBack(int index, bool stuff)
+    {
+        var walker = walkers[index];
+        var Visited = gameObject.GetComponentsInChildren<WalkerScript>()[0].Visited;
+        targetpos.x *= UnityEngine.Random.Range(-1, 1);
+        targetpos.z *= UnityEngine.Random.Range(-1, 1);
+        if (Sec(targetpos, walker) != null)
+        {
+            if (stuff)
+            {
+                thing++;
+                if (thing >= 2)
                 {
-                    walker.transform.position = targetpos;
-                    Sec(targetpos, walker).GetComponent<ProGen>().WalkerOn(walker);
-
+                    thing = 0;
                 }
-                else
-                {
-                    var neighbor = ValidNeighbor(walker.transform.position, walker);
-                    if (neighbor != null)
-                    {
-                        neighbor.GetComponent<ProGen>().WalkerOn(walker);
-                        targetpos = neighbor.transform.position;
-                        walker.transform.position = targetpos;
-                        
-                    }
-                    else if (Visited.Count() >= 1)
-                    {
-                        walker.transform.position = Visited[Visited.Count() - 1].transform.position;
-                        Visited.Remove(Visited.Last());
-                        
-                    }
 
+            }
+            walker.transform.position = targetpos;
+            Sec(targetpos, walker).GetComponent<ProGen>().WalkerOn(walker);
+            
+
+        }
+        else
+        {
+            var neighbor = ValidNeighbor(walker.transform.position, walker);
+            if (neighbor != null)
+            {
+                neighbor.GetComponent<ProGen>().WalkerOn(walker);
+                targetpos = neighbor.transform.position;
+                walker.transform.position = targetpos;
+                if(stuff)
+                {
+                    thing++;
+                    if (thing >= 2)
+                    {
+                        thing = 0;
+                    }
                     
-                    continue;
                 }
             }
+            else if (Visited.Count() >= 1)
+            {
+                walker.transform.position = Visited[Visited.Count() - 1].transform.position;
+                Visited.Remove(Visited.Last());
+
+            }
+
+
+            
         }
     }
     GameObject ValidNeighbor(Vector3 thing, GameObject walker)
