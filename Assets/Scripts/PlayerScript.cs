@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -73,16 +74,21 @@ public class PlayerScript : MonoBehaviour
     }
     private void Move()
     {
-        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
-        {
+        var controls = new PlayerControls();
 
-            move = Time.deltaTime * speed * new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-            move = transform.TransformDirection(move);
-            cc.Move(Thing(move));
-            Turn();
+       
+            
+
+                move = speed * controls.Main.Move.ReadValue<Vector3>();
+            print(move);
+                move = transform.TransformDirection(move);
+                cc.Move(move);
+                Turn();
 
 
-        }
+            
+            
+        
         if (!cc.isGrounded && !jumping)
         {
             cc.Move(new Vector3(0, -8.18f, 0));
