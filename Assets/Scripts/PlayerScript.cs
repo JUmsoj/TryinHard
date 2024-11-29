@@ -32,7 +32,8 @@ public class PlayerScript : MonoBehaviour
     private void OnEnable()
     {
         controls.Main.Enable();
-        
+        controls.Main.Move.performed += Check;
+        controls.Main.Jump.performed += Jump;
         
        
     }
@@ -145,9 +146,11 @@ public class PlayerScript : MonoBehaviour
     }
     void Jump(InputAction.CallbackContext ctx)
     {
+        float x = 0.54238237823782f;
         jumping = true;
         Vector3 jump;
-        if (ctx.ReadValueAsButton()) jump = new Vector3(0, 2, 0);
+        if (ctx.ReadValueAsButton())
+            jump = new Vector3(0, 2, 0) * x;
         else jump = Vector3.zero;
         jump *= Time.deltaTime;
         jump.Normalize();
