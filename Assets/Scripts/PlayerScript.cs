@@ -34,6 +34,7 @@ public class PlayerScript : MonoBehaviour
         controls.Main.Enable();
         controls.Main.Move.performed += Check;
         controls.Main.Jump.performed += Jump;
+        controls.Main.Inv.performed += NumberPress;
         
        
     }
@@ -185,7 +186,7 @@ public class PlayerScript : MonoBehaviour
     {
         var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
         List<GameObject> inv = Player.Inventory.INVENTORY;
-        int selection = EnemyScript.spawner.hand;
+        int selection = Mathf.Min(EnemyScript.spawner.hand, inv.Count-1);
         GameObject player = GameObject.Find("Player");
         Activate(inv[selection]);
 
@@ -207,58 +208,17 @@ public class PlayerScript : MonoBehaviour
         {
             player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
         }
-
-        if (NumberPress() < inv.Count)
-        {
-            selection = NumberPress();
-            EnemyScript.spawner.hand = NumberPress();
-        }
+        
+        
+            
+        
         
     }
-    static int NumberPress()
+    void  NumberPress(InputAction.CallbackContext ctx)
     {
 
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            return 0;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            return 1;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            return 2;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            return 3;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            return 4;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            return 5;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            return 6;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            return 7;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            return 8;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            return 9;
-        }
-        return EnemyScript.spawner.hand;
+        ref int selection = ref EnemyScript.spawner.hand;
+        selection = Mathf.Min((int)ctx.ReadValue<float>(), Inventory.INVENTORY.Count-1);
     }
         public static void Activate(GameObject target)
         {
@@ -273,6 +233,19 @@ public class PlayerScript : MonoBehaviour
             target.transform.position = hand.transform.position;
             return;
        }
+    public class HoldAndRelease : IInputInteraction
+    {
+        //while it is started then add to power variable
+        // then when it is released(performed) then return and throw
+        public void Process(ref InputInteractionContext ctx)
+        {
+
+        }
+        public void Reset()
+        {
+
+        }
+    }
     private void OnCollisionEnter(Collision collision)
     {
        if(collision.gameObject.name == "Ground")

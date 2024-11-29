@@ -17,7 +17,7 @@ public class BackpackScript : MonoBehaviour
     {
         
         container.Add(GameObject.Find("sword"));
-        container.Add(new GameObject("bow"));
+        container.Add(GameObject.Find("Bow"));
         
     }
     private void OnEnable()
@@ -25,6 +25,7 @@ public class BackpackScript : MonoBehaviour
         
             controls.Main.Collect.Enable();
             controls.Main.Collect.performed += PlayerCapture;
+           
         
         
     }

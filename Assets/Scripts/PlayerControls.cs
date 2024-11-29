@@ -32,7 +32,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""type"": ""Value"",
                     ""id"": ""f611c93e-8ab7-473e-806e-0f049b0209df"",
                     ""expectedControlType"": ""Vector3"",
-                    ""processors"": """",
+                    ""processors"": ""AddTwoVectors(thing=2.5)"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
                 },
@@ -61,6 +61,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": ""Hold"",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Inv"",
+                    ""type"": ""Value"",
+                    ""id"": ""bc0841f2-cbe5-4d00-9ee4-c0c7906d60d5"",
+                    ""expectedControlType"": """",
+                    ""processors"": ""Clamp(max=10)"",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Bow"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""ae6f769c-b044-4708-bf11-75e4e16e1bae"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""SlowTap(duration=1.5)"",
                     ""initialStateCheck"": true
                 }
             ],
@@ -157,7 +175,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""34af96db-112b-4c01-ba2f-46c805cf2930"",
                     ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Collect"",
@@ -185,6 +203,72 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Sword"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7d339e2-3147-4c69-add3-95454f1e4a3f"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=0)"",
+                    ""groups"": """",
+                    ""action"": ""Inv"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""93f256e8-b2d5-4a8b-9385-d11c99daa3d2"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale"",
+                    ""groups"": """",
+                    ""action"": ""Inv"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c798b31c-dfd8-4232-bced-e1b98d569aa4"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=2)"",
+                    ""groups"": """",
+                    ""action"": ""Inv"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""147e4cba-dfd1-4ea4-b2f1-f6a6314e773e"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=3)"",
+                    ""groups"": """",
+                    ""action"": ""Inv"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b728b2cd-3da7-46f4-8003-24cb02becfe4"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=4)"",
+                    ""groups"": """",
+                    ""action"": ""Inv"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""216b56f0-457e-42d1-9fc1-0529aeaa0dfc"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Bow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -197,6 +281,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Main_Jump = m_Main.FindAction("Jump", throwIfNotFound: true);
         m_Main_Collect = m_Main.FindAction("Collect", throwIfNotFound: true);
         m_Main_Sword = m_Main.FindAction("Sword", throwIfNotFound: true);
+        m_Main_Inv = m_Main.FindAction("Inv", throwIfNotFound: true);
+        m_Main_Bow = m_Main.FindAction("Bow", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -267,6 +353,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_Jump;
     private readonly InputAction m_Main_Collect;
     private readonly InputAction m_Main_Sword;
+    private readonly InputAction m_Main_Inv;
+    private readonly InputAction m_Main_Bow;
     public struct MainActions
     {
         private @PlayerControls m_Wrapper;
@@ -275,6 +363,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Main_Jump;
         public InputAction @Collect => m_Wrapper.m_Main_Collect;
         public InputAction @Sword => m_Wrapper.m_Main_Sword;
+        public InputAction @Inv => m_Wrapper.m_Main_Inv;
+        public InputAction @Bow => m_Wrapper.m_Main_Bow;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -296,6 +386,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Sword.started += instance.OnSword;
             @Sword.performed += instance.OnSword;
             @Sword.canceled += instance.OnSword;
+            @Inv.started += instance.OnInv;
+            @Inv.performed += instance.OnInv;
+            @Inv.canceled += instance.OnInv;
+            @Bow.started += instance.OnBow;
+            @Bow.performed += instance.OnBow;
+            @Bow.canceled += instance.OnBow;
         }
 
         private void UnregisterCallbacks(IMainActions instance)
@@ -312,6 +408,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Sword.started -= instance.OnSword;
             @Sword.performed -= instance.OnSword;
             @Sword.canceled -= instance.OnSword;
+            @Inv.started -= instance.OnInv;
+            @Inv.performed -= instance.OnInv;
+            @Inv.canceled -= instance.OnInv;
+            @Bow.started -= instance.OnBow;
+            @Bow.performed -= instance.OnBow;
+            @Bow.canceled -= instance.OnBow;
         }
 
         public void RemoveCallbacks(IMainActions instance)
@@ -335,5 +437,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnCollect(InputAction.CallbackContext context);
         void OnSword(InputAction.CallbackContext context);
+        void OnInv(InputAction.CallbackContext context);
+        void OnBow(InputAction.CallbackContext context);
     }
 }
