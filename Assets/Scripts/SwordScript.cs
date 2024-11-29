@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.Interactions;
 using UnityEngine.UI;
 using UnityEngine.WSA;
-
+using UnityEngine.InputSystem;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 public class SwordScript : MonoBehaviour
 {
     // private string[] attacks;
@@ -21,9 +23,37 @@ public class SwordScript : MonoBehaviour
     private Vector3 move = new Vector3(-5, 0, 0);
     private Rigidbody rb;
     private MeshCollider Collider;
-
+    public PlayerControls controls;
     // Start is called before the first frame update
-    
+    private void Awake()
+    {
+        controls = new();
+        
+    }
+    void OnLeftClick(InputAction.CallbackContext ctx)
+    {
+        Debug.LogWarning("thing of ");
+        if (ctx.interaction is HoldInteraction)
+        {
+            Throw();
+            Debug.LogWarning("Hi");
+        }
+        else
+        {
+            anim.SetTrigger("Hit");
+            Hit();
+        }
+    }
+    private void OnEnable()
+    {
+        controls.Main.Sword.Enable();
+        controls.Main.Sword.performed += OnLeftClick;
+    }
+    private void OnDisable()
+    {
+        controls.Main.Sword.Disable();  
+        controls.Main.Sword.performed -= OnLeftClick;
+    }
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -60,22 +90,9 @@ public class SwordScript : MonoBehaviour
         }
      
         
-        if (Input.GetKeyDown(KeyCode.T) && !threw)
-        {
-            print("ht");
-            Throw();
-            threw = true;
-        }
-        if (Input.GetMouseButton(0))
-        {
-            anim.SetTrigger("Hit");
-        }
         
-        if(Input.GetAxis("turn") != 0)
-        {
-            gameObject.transform.Rotate(new Vector3(0, 0, 90 * Input.GetAxis("turn")));
-            print($"Turned {90 * Input.GetAxis("turn")} Degrees");
-        }
+        
+        
         
        
     }
