@@ -1451,6 +1451,8 @@ MonoBehaviour:
       Owner: {fileID: 1658171045}
       Enabled: 1
       Input:
+        InputAction: {fileID: 0}
+        Gain: 1
         LegacyInput: Mouse X
         LegacyGain: 200
         CancelDeltaTime: 0
@@ -1462,6 +1464,8 @@ MonoBehaviour:
       Owner: {fileID: 1658171045}
       Enabled: 1
       Input:
+        InputAction: {fileID: 0}
+        Gain: 1
         LegacyInput: Mouse Y
         LegacyGain: -200
         CancelDeltaTime: 0
@@ -1473,6 +1477,8 @@ MonoBehaviour:
       Owner: {fileID: 1658171045}
       Enabled: 1
       Input:
+        InputAction: {fileID: 0}
+        Gain: 1
         LegacyInput: Mouse ScrollWheel
         LegacyGain: 200
         CancelDeltaTime: 0
@@ -1480,6 +1486,8 @@ MonoBehaviour:
       Driver:
         AccelTime: 0
         DecelTime: 0
+  PlayerIndex: -1
+  AutoEnableInputs: 1
 --- !u!114 &1658171043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1659,6 +1667,7 @@ GameObject:
   - component: {fileID: 2009288931}
   - component: {fileID: 2009288934}
   - component: {fileID: 2009288936}
+  - component: {fileID: 2009288937}
   m_Layer: 0
   m_Name: Player
   m_TagString: Finish
@@ -1773,6 +1782,21 @@ MonoBehaviour:
   Inventory: {fileID: 0}
   x: 0
   cam: {fileID: 0}
+--- !u!114 &2009288937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009288929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
 --- !u!1 &2045641135
 GameObject:
   m_ObjectHideFlags: 0
