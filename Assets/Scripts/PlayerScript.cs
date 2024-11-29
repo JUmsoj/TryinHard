@@ -11,7 +11,7 @@ public class PlayerScript : MonoBehaviour
 {
 
     [SerializeField]
-    private PlayerControls controls;
+    public PlayerControls controls;
     public Player Inventory;
     public static bool IsInventoryExists = false;
     bool jumping = false;
@@ -26,7 +26,7 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
-        controls = new PlayerControls();
+        controls = new();
         Inventory = ScriptableObject.CreateInstance<Player>();
     }
     private void OnEnable()
