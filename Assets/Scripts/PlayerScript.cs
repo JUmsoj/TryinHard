@@ -6,11 +6,12 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
-
+using UnityEngine.InputSystem;
 public class PlayerScript : MonoBehaviour
 {
 
     [SerializeField]
+    private PlayerControls controls;
     public Player Inventory;
     public static bool IsInventoryExists = false;
     bool jumping = false;
@@ -25,10 +26,27 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
+        controls = new PlayerControls();
         Inventory = ScriptableObject.CreateInstance<Player>();
+    }
+    private void OnEnable()
+    {
+        controls.Main.Enable();
+        
+        
+       
+    }
+    private void OnDisable()
+    {
+        controls.Main.Disable();
+        
+        
+        
     }
     void Start()
     {
+        
+        
         
         Deactivate(GameObject.Find("sword"));
         cam = GameObject.Find("FreeLook Camera").transform;
@@ -46,14 +64,13 @@ public class PlayerScript : MonoBehaviour
         }
         x = health;
         Move();
+        
+        
         if(Input.GetKey(KeyCode.L))
         {
             Dash(cooldown);
         }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Jump();
-        }
+        
     }
     private IEnumerator Tiring()
     {
@@ -63,26 +80,27 @@ public class PlayerScript : MonoBehaviour
     }
     void Turn()
     {
-        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
-        {
+
+        
             Vector3 currentlook = cam.forward;
             currentlook.y = 0;
             Quaternion target = Quaternion.LookRotation(currentlook);
             transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5);
             transform.rotation = cam.rotation;
-        }
+        
     }
     private void Move()
     {
-        var controls = new PlayerControls();
 
-       
-            
 
-                move = speed * controls.Main.Move.ReadValue<Vector3>();
-            print(move);
+
+
+                var temp = 5f/2f;
+                move = temp * controls.Main.Move.ReadValue<Vector3>();
+                print(move);
+                
                 move = transform.TransformDirection(move);
-                cc.Move(move);
+                cc.Move(Thing(move));
                 Turn();
 
 
@@ -115,15 +133,22 @@ public class PlayerScript : MonoBehaviour
 
         }
     }
+    void Check(InputAction.CallbackContext ctx)
+    {
+        print("Hi World");
+        Debug.LogWarning("Hi Fellows");
+    }
     Vector3 Thing(Vector3 move)
     {
         move.Normalize();
         return move;
     }
-    void Jump()
+    void Jump(InputAction.CallbackContext ctx)
     {
         jumping = true;
-        Vector3 jump = new (0, 2, 0);
+        Vector3 jump;
+        if (ctx.ReadValueAsButton()) jump = new Vector3(0, 2, 0);
+        else jump = Vector3.zero;
         jump *= Time.deltaTime;
         jump.Normalize();
         for (int i = 0; i < 4; i++)
