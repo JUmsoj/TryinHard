@@ -1,4 +1,5 @@
 using NUnit;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ public class PlayerScript : MonoBehaviour
 {
 
     [SerializeField]
+    public float thing;
     public PlayerControls controls;
     public Player Inventory;
     public static bool IsInventoryExists = false;
@@ -220,37 +222,18 @@ public class PlayerScript : MonoBehaviour
         ref int selection = ref EnemyScript.spawner.hand;
         selection = Mathf.Min((int)ctx.ReadValue<float>(), Inventory.INVENTORY.Count-1);
     }
-        public static void Activate(GameObject target)
-        {
-            var hand = GameObject.Find("Hand");
-            var player = GameObject.Find("Player");
-            target.SetActive(true);
-            if (target.transform.parent == player.transform.GetChild(1).gameObject)
-            {
-                target.transform.rotation = hand.transform.rotation;
-            }
-            target.transform.parent = hand.transform;
-            target.transform.position = hand.transform.position;
-            return;
-       }
-    public class HoldAndRelease : IInputInteraction
+    public static void Activate(GameObject target)
     {
-        //while it is started then add to power variable
-        // then when it is released(performed) then return and throw
-        public void Process(ref InputInteractionContext ctx)
+        var hand = GameObject.Find("Hand");
+        var player = GameObject.Find("Player");
+        target.SetActive(true);
+        if (target.transform.parent == player.transform.GetChild(1).gameObject)
         {
+            target.transform.rotation = hand.transform.rotation;
+        }
+        target.transform.parent = hand.transform;
+        target.transform.position = hand.transform.position;
+        return;
 
-        }
-        public void Reset()
-        {
-
-        }
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-       if(collision.gameObject.name == "Ground")
-        {
-            jumping = false;
-        }
     }
 }

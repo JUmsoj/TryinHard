@@ -74,11 +74,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Bow"",
-                    ""type"": ""PassThrough"",
+                    ""type"": ""Value"",
                     ""id"": ""ae6f769c-b044-4708-bf11-75e4e16e1bae"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": ""SlowTap(duration=1.5)"",
+                    ""interactions"": ""HoldAndRelease(duration=6)"",
                     ""initialStateCheck"": true
                 }
             ],
@@ -263,7 +263,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""216b56f0-457e-42d1-9fc1-0529aeaa0dfc"",
                     ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
+                    ""interactions"": ""HoldAndRelease(duration=1.5)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Bow"",
