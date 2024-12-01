@@ -13,7 +13,7 @@ public class TerrainGen : MonoBehaviour
 {
     public GameObject other;
     Vector3 targetpos;
-    public GameObject walker;
+    private List<GameObject> walkers = new List<GameObject>();
      public GameObject touching;
     public int count;
     public GameObject[] Sectors;
@@ -21,14 +21,16 @@ public class TerrainGen : MonoBehaviour
     [SerializeField] char[] s = new char[3];
     [SerializeField] string l;
     // set this tommorow 11/19/24
-    public Material[] biomes;
+    public Material[] biomes {get; set; }
     // 5 biomes and ten different rotations;
-    public Quaternion[] rotations = new Quaternion[10];
+    public Quaternion[] rotations { get; set;  } = new Quaternion[10];
+    public int thing;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
         Sort();
-        WorldGen();
+        WorldGen(Sectors[UnityEngine.Random.Range(1, Sectors.Length)]);
     }
 
 
@@ -102,7 +104,7 @@ public class TerrainGen : MonoBehaviour
             try
             {
                 nums[i] = int.Parse(l);
-                print(l);
+                
             }
             catch (Exception)
             {
@@ -122,58 +124,146 @@ public class TerrainGen : MonoBehaviour
         }
         // free the memory
     }
-   
-    void WorldGen()
+    void UpdateBiome(bool y) {
+        if(y) {
+            // change the biome of the  current thing
+            thing++;
+            if(thing >= 2) 
+            {
+                thing = 0;
+            }
+        }
+    }
+    void WorldGen(GameObject start)
     {
-        touching = gameObject.transform.GetChild(61).gameObject;
+        touching = start;
         other = gameObject.transform.GetChild(97).gameObject;
-        walker = new GameObject("Walker", typeof(WalkerScript));
+
+        var walker = new GameObject("Walker", typeof(WalkerScript));
         walker.transform.position = touching.transform.position;
         walker.transform.parent = gameObject.transform;
-        CreateAndMove(1000);
+        touching.GetComponent<ProGen>().WalkerOn(walker);
+        walkers.Add(walker);
+        CreateAndMove(1000!, walkers.IndexOf(walker));
         return;
         
         
 
 
     }
-    void CreateAndMove(int permutations)
+    void CreateAndMove(int permutations, int index)
     {
-        for (int i = 0; i <= permutations; i++)
+        
+        for(int i = 0;i<permutations;i++)
         {
-
-
-
-
+            
+            var walker = walkers[Mathf.Min(index, walkers.Count())];
+            var Visited = walker.GetComponent<WalkerScript>().Visited;
+            bool x = false;
             targetpos = walker.GetComponent<WalkerScript>().SimulateMove(1);
-            if (Sec(targetpos) != null)
+            if (i % 5 == 0)
             {
-                walker.transform.position = targetpos;
-                Sec(targetpos).GetComponent<ProGen>().WalkerOn();
-
+                 x = true;
             }
+            if (Sec(targetpos, walker) != null)
+            {
+                UpdateBiome(x);
+                walker.transform.position = targetpos;
+                Sec(targetpos, walker).GetComponent<ProGen>().WalkerOn(walker);
+                
+            }
+
+            
             else
             {
-
-                targetpos.x *= -1;
-                targetpos.z *= -1;
-                if (Sec(targetpos) != null)
-                {
-                    walker.transform.position = targetpos;
-                    Sec(targetpos).GetComponent<ProGen>().WalkerOn();
-
-                }
-                else
-                {
-                    walker.GetComponent<WalkerScript>().Visited.Remove(walker.GetComponent<WalkerScript>().Visited.Last());
-                    walker.transform.position = walker.GetComponent<WalkerScript>().Visited.Last().transform.position;
-                    i--;
-                    continue;
-                }
+                FallBack(index, x);
+                
             }
         }
     }
-    GameObject Sec(Vector3 target)
+    void FallBack(int index, bool stuff)
+    {
+        var walker = walkers[index];
+        var Visited = gameObject.GetComponentsInChildren<WalkerScript>()[0].Visited;
+        targetpos.x *= UnityEngine.Random.Range(-1, 1);
+        targetpos.z *= UnityEngine.Random.Range(-1, 1);
+        if (Sec(targetpos, walker) != null)
+        {
+            UpdateBiome(stuff);
+            walker.transform.position = targetpos;
+            Sec(targetpos, walker).GetComponent<ProGen>().WalkerOn(walker);
+            
+
+        }
+        else
+        {
+            var neighbor = ValidNeighbor(walker.transform.position, walker);
+            if (neighbor != null)
+            {
+                neighbor.GetComponent<ProGen>().WalkerOn(walker);
+                targetpos = neighbor.transform.position;
+                walker.transform.position = targetpos;
+                UpdateBiome(stuff);
+            }
+            else if (Visited.Count() >= 1)
+            {
+                walker.transform.position = Visited[Visited.Count() - 1].transform.position;
+                Visited.Remove(Visited.Last());
+
+            }
+
+
+            
+        }
+    }
+    GameObject ValidNeighbor(Vector3 thing, GameObject walker)
+    {
+        Vector3 temp = thing;
+        var l = walker.GetComponent<Transform>().position;
+        Vector3 Left()
+        {
+            temp.x = l.x + 0;
+            temp.z = l.z - 40;
+            return temp;
+        }
+        Vector3 Right()
+        {
+            temp.x = l.x + 0;
+            temp.z = l.z + 40;
+            return temp;
+        }
+        Vector3 Up()
+        {
+            temp.x = l.x + 80;
+            temp.z = l.z + 0;
+            return temp;
+            
+        }
+        Vector3 Down()
+        {
+            temp.x = l.x - 80;
+            temp.z = l.z + 0;
+            return temp;
+        }
+        var x = new Func<Vector3>[] {() => Left(), () => Right(), () => Down(), () => Up()};
+        var checkedout = new List<Func<Vector3>>();
+        while(checkedout.Count < x.Count())
+        {
+            var select = x[UnityEngine.Random.Range(0, x.Length)];
+            if(!checkedout.Contains(select) && Sec(select(), walker) != null)
+            {
+                return Sec(select(), walker);
+            }
+            else if(!checkedout.Contains(select))
+            {
+                checkedout.Add(select);
+            }
+        }
+        return null;
+        
+        
+    }
+    GameObject Sec(Vector3 target, GameObject walker)
     {
         foreach (var item in Sectors)
         {

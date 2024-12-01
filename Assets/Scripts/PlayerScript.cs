@@ -1,15 +1,19 @@
 using NUnit;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-
+using UnityEngine.Animations;
+using UnityEngine.InputSystem;
 public class PlayerScript : MonoBehaviour
 {
 
     [SerializeField]
+    public float thing;
+    public PlayerControls controls;
     public Player Inventory;
     public static bool IsInventoryExists = false;
     bool jumping = false;
@@ -24,10 +28,29 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
+        controls = new();
         Inventory = ScriptableObject.CreateInstance<Player>();
+    }
+    private void OnEnable()
+    {
+        controls.Main.Enable();
+        controls.Main.Move.performed += Check;
+        controls.Main.Jump.performed += Jump;
+        controls.Main.Inv.performed += NumberPress;
+        
+       
+    }
+    private void OnDisable()
+    {
+        controls.Main.Disable();
+        
+        
+        
     }
     void Start()
     {
+        
+        
         
         Deactivate(GameObject.Find("sword"));
         cam = GameObject.Find("FreeLook Camera").transform;
@@ -45,14 +68,13 @@ public class PlayerScript : MonoBehaviour
         }
         x = health;
         Move();
+        
+        
         if(Input.GetKey(KeyCode.L))
         {
             Dash(cooldown);
         }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Jump();
-        }
+        
     }
     private IEnumerator Tiring()
     {
@@ -62,27 +84,33 @@ public class PlayerScript : MonoBehaviour
     }
     void Turn()
     {
-        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
-        {
+
+        
             Vector3 currentlook = cam.forward;
             currentlook.y = 0;
             Quaternion target = Quaternion.LookRotation(currentlook);
             transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5);
             transform.rotation = cam.rotation;
-        }
+        
     }
     private void Move()
     {
-        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
-        {
-
-            move = Time.deltaTime * speed * new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-            move = transform.TransformDirection(move);
-            cc.Move(Thing(move));
-            Turn();
 
 
-        }
+
+
+                var temp = 5f/2f;
+                move = temp * controls.Main.Move.ReadValue<Vector3>();
+                print(move);
+                
+                move = transform.TransformDirection(move);
+                cc.Move(Thing(move));
+                Turn();
+
+
+            
+            
+        
         if (!cc.isGrounded && !jumping)
         {
             cc.Move(new Vector3(0, -8.18f, 0));
@@ -109,15 +137,24 @@ public class PlayerScript : MonoBehaviour
 
         }
     }
+    void Check(InputAction.CallbackContext ctx)
+    {
+        print("Hi World");
+        Debug.LogWarning("Hi Fellows");
+    }
     Vector3 Thing(Vector3 move)
     {
         move.Normalize();
         return move;
     }
-    void Jump()
+    void Jump(InputAction.CallbackContext ctx)
     {
+        float x = 0.54238237823782f;
         jumping = true;
-        Vector3 jump = new (0, 2, 0);
+        Vector3 jump;
+        if (ctx.ReadValueAsButton())
+            jump = new Vector3(0, 2, 0) * x;
+        else jump = Vector3.zero;
         jump *= Time.deltaTime;
         jump.Normalize();
         for (int i = 0; i < 4; i++)
@@ -151,7 +188,8 @@ public class PlayerScript : MonoBehaviour
     {
         var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
         List<GameObject> inv = Player.Inventory.INVENTORY;
-        int selection = EnemyScript.spawner.hand;
+        ref int selection = ref EnemyScript.spawner.hand;
+        selection = Mathf.Min(selection, inv.Count-1);
         GameObject player = GameObject.Find("Player");
         Activate(inv[selection]);
 
@@ -173,77 +211,30 @@ public class PlayerScript : MonoBehaviour
         {
             player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
         }
-
-        if (NumberPress() < inv.Count)
-        {
-            selection = NumberPress();
-            EnemyScript.spawner.hand = NumberPress();
-        }
+        
+        
+            
+        
         
     }
-    static int NumberPress()
+    void  NumberPress(InputAction.CallbackContext ctx)
     {
 
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            return 0;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            return 1;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            return 2;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            return 3;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            return 4;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            return 5;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            return 6;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            return 7;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            return 8;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            return 9;
-        }
-        return EnemyScript.spawner.hand;
+        ref int selection = ref EnemyScript.spawner.hand;
+        selection = Mathf.Min((int)ctx.ReadValue<float>(), Inventory.INVENTORY.Count-1);
     }
-        public static void Activate(GameObject target)
-        {
-            var hand = GameObject.Find("Hand");
-            var player = GameObject.Find("Player");
-            target.SetActive(true);
-            if (target.transform.parent == player.transform.GetChild(1).gameObject)
-            {
-                target.transform.rotation = hand.transform.rotation;
-            }
-            target.transform.parent = hand.transform;
-            target.transform.position = hand.transform.position;
-            return;
-       }
-    private void OnCollisionEnter(Collision collision)
+    public static void Activate(GameObject target)
     {
-       if(collision.gameObject.name == "Ground")
+        var hand = GameObject.Find("Hand");
+        var player = GameObject.Find("Player");
+        target.SetActive(true);
+        if (target.transform.parent == player.transform.GetChild(1).gameObject)
         {
-            jumping = false;
+            target.transform.rotation = hand.transform.rotation;
         }
+        target.transform.parent = hand.transform;
+        target.transform.position = hand.transform.position;
+        return;
+
     }
 }
