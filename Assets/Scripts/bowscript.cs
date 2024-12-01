@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 using System;
 using System.Net;
+using System.Collections.Generic;
 public class bowscript : MonoBehaviour
 {
     public float stuff;
@@ -23,41 +24,34 @@ public class bowscript : MonoBehaviour
         controls.Main.Bow.Enable();
         rb = GetComponent<Rigidbody>();
         controls.Main.Bow.performed += Shoot;
-        controls.Main.Bow.started += context =>
-        {
-            Debug.LogWarning("shooting");
-        };
+        
         
     }
     private void OnDisable()
     {
         controls.Main.Bow.Disable();
         controls.Main.Bow.performed -= Shoot;
-        controls.Main.Bow.started -= context =>
-        {
-            Debug.LogWarning("shooting");
-        };
+        
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb.useGravity = false; 
     }
-    void Shoot(InputAction.CallbackContext context)
+    public void Shoot(InputAction.CallbackContext ctx)
     {
-        if (context.performed && context.interaction is HoldAndRelease )
-        {
-           
-           gameObject.transform.parent.gameObject.transform.parent.gameObject.GetComponent<PlayerScript>().Inventory.INVENTORY
-
-            .Remove(gameObject);
-            Debug.LogError("stuff");
             gameObject.transform.parent = null;
+            ref List<GameObject> inv = ref GameObject.Find("Player").GetComponent<PlayerScript>().Inventory.INVENTORY;
+            print(inv);
+            inv.Remove(gameObject);
+
+            Debug.LogError("stuff");
+            
             rb.useGravity = true;
 
             rb.AddForce(stuff * new Vector3(5, 0, 5));
 
-        }
+        
        
         
         
@@ -83,71 +77,92 @@ public class AddTwoVectors : InputProcessor<Vector3>
         return thing * val;
     }
 }
-    
-    [InitializeOnLoad]
+
+[InitializeOnLoad]
 public class HoldAndRelease : IInputInteraction<float>
 {
     public float duration;
-    
+    bool stuff;
+    public float max;
+    bool notcreatedroutine = true;
+    public float intervals;
     static HoldAndRelease()
     {
         InputSystem.RegisterInteraction<HoldAndRelease>();
     }
     //while it is started then add to power variable
     // then when it is released(performed) then return and throw
-    public void Process(ref InputInteractionContext ctx)
+    public void Process(ref InputInteractionContext ctx) 
     {
+       
+       
+       
+        bowscript script = GameObject.Find("Bow").GetComponent<bowscript>();
+        stuff = ctx.ControlIsActuated(1);
         
-        bool stuff = ctx.ControlIsActuated(0.75f);
-        ref float power = ref GameObject.Find("Bow").GetComponent<bowscript>().stuff;
-        bowscript script =GameObject.Find("Bow").GetComponent<bowscript>();
-        if(stuff && power <= duration)
+        if (notcreatedroutine && stuff)
         {
-            
-            
-            script.StartCoroutine(Get(stuff, duration));
-            
+            script.StartCoroutine(Get(max));
+            notcreatedroutine = false;
         }
-         if(!stuff) 
+        
+        
+
+        if (!stuff)
         {
-            script.StopCoroutine(Get(stuff, duration));
-            
-            if(power >= duration + 8)
+            ref float power = ref GameObject.Find("Bow").GetComponent<bowscript>().stuff;
+            notcreatedroutine = true;
+            float x = GameObject.Find("Bow").GetComponent<bowscript>().stuff;
+            if (x >= duration)
             {
+                ctx.action.performed -= script.Shoot;
+                ctx.action.performed += script.Shoot;
                 ctx.Performed();
+                Debug.LogWarning("He");
+
+                
+
+
+
             }
             else
             {
-                power = 0;
+                
                 ctx.Canceled();
-            }
+                
 
-        }
-    }
-    // subroutine
-    public IEnumerator Get(bool nen, float dur)
-    {
-        while (GameObject.Find("Bow").GetComponent<bowscript>().stuff < dur)
-        {
-            yield return new WaitForSeconds(2);
-            if (nen)
-            {
-                try
-                {
-                    GameObject.Find("Bow").GetComponent<bowscript>().stuff++;
 
-                }
-                catch (Exception e)
-                {
-                    MonoBehaviour.print($"exception {e}");
-                }
+
+
             }
+            power = 0;
+            return;
         }
+        // subroutine
         
     }
-   
+
+    private void Action_performed(InputAction.CallbackContext obj)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerator Get( float dur)
+    {
+        
+            while (GameObject.Find("Bow").GetComponent<bowscript>().stuff < dur && stuff)
+            {
+                    var temp = GameObject.Find("Bow").GetComponent<bowscript>().stuff + 1;
+                    yield return new WaitForSeconds(intervals);
+                    GameObject.Find("Bow").GetComponent<bowscript>().stuff = temp;
+                    continue;
+
+            }
+            yield break;
+    }
+
     public void Reset()
     {
-
+        
     }
 }

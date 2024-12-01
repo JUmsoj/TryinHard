@@ -1284,23 +1284,6 @@ MonoBehaviour:
   nums: 
   s: 000000000000
   l: 
-  biomes:
-  - {fileID: 2100000, guid: 10ed2d988f991b94081a7a50b971caab, type: 2}
-  - {fileID: 2100000, guid: 88f7cb9abdede7b49835cb96ba2c3562, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  rotations:
-  - {x: 0, y: 0, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
   thing: 0
 --- !u!1 &1646894400
 GameObject:

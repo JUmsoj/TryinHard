@@ -21,13 +21,14 @@ public class TerrainGen : MonoBehaviour
     [SerializeField] char[] s = new char[3];
     [SerializeField] string l;
     // set this tommorow 11/19/24
-    public Material[] biomes;
+    public Material[] biomes {get; set; }
     // 5 biomes and ten different rotations;
-    public Quaternion[] rotations = new Quaternion[10];
+    public Quaternion[] rotations { get; set;  } = new Quaternion[10];
     public int thing;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
         Sort();
         WorldGen(Sectors[UnityEngine.Random.Range(1, Sectors.Length)]);
     }

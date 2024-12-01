@@ -188,7 +188,8 @@ public class PlayerScript : MonoBehaviour
     {
         var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
         List<GameObject> inv = Player.Inventory.INVENTORY;
-        int selection = Mathf.Min(EnemyScript.spawner.hand, inv.Count-1);
+        ref int selection = ref EnemyScript.spawner.hand;
+        selection = Mathf.Min(selection, inv.Count-1);
         GameObject player = GameObject.Find("Player");
         Activate(inv[selection]);
 

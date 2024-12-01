@@ -78,7 +78,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""ae6f769c-b044-4708-bf11-75e4e16e1bae"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": ""HoldAndRelease(duration=6)"",
+                    ""interactions"": ""HoldAndRelease(duration=6,max=10,intervals=1)"",
                     ""initialStateCheck"": true
                 }
             ],
@@ -263,7 +263,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""216b56f0-457e-42d1-9fc1-0529aeaa0dfc"",
                     ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": ""HoldAndRelease(duration=1.5)"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Bow"",
