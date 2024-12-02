@@ -7,8 +7,16 @@ using UnityEngine.InputSystem.Interactions;
 using System;
 using System.Net;
 using System.Collections.Generic;
+using System.Threading.Tasks.Sources;
+using JetBrains.Annotations;
+public class QUESTS : ScriptableObject
+{
+    public Quest<float>[] Quests { get; set; } = new Quest<float>[5];
+
+}
 public class bowscript : MonoBehaviour
 {
+    public QUESTS quest;
     public float stuff;
     private GameObject parent;
     private PlayerControls controls;
@@ -16,7 +24,8 @@ public class bowscript : MonoBehaviour
     private void Awake()
     {
         controls = new();
-        
+        quest = ScriptableObject.CreateInstance<QUESTS>();
+        quest.Quests[0] = new KillQuest(start:GameObject.Find("sword").GetComponent<SwordScript>().kill, goal:3f);
     }
     private void OnEnable()
     {
@@ -50,7 +59,7 @@ public class bowscript : MonoBehaviour
             rb.useGravity = true;
 
             rb.AddForce(stuff * new Vector3(5, 0, 5));
-
+            
         
        
         
@@ -62,7 +71,51 @@ public class bowscript : MonoBehaviour
         
     }
 }
+public class Quest<T>
+{
+    public T goal { get; set; }
+    T num; // This field is declared but not used. You might want to consider its purpose.
 
+    public Quest(T goal, T start)
+    {
+        this.goal = goal;
+    }
+
+    public virtual void Progress()
+    {
+        // Implementation for progress could go here
+    }
+    public virtual void Complete()
+    {
+        Debug.Log("completed task");
+    }
+}
+
+public class KillQuest : Quest<float>
+{
+    float kills;
+    float start;
+    public KillQuest(float goal,  float start) : base(goal, start)
+    {
+        this.goal = goal;
+        kills = 0;
+        this.start = start;
+    }
+    public override void Progress()
+    {
+        kills = GameObject.Find("sword").GetComponent<SwordScript>().kill;
+        if(start + goal >= kills)
+        {
+            Complete();
+        }
+      
+    }
+    public override void Complete()
+    {
+        Debug.LogWarning($"Killed {kills - start} number of enemies");
+    }
+    public delegate void Watch();
+}
 [InitializeOnLoad]
 public class AddTwoVectors : InputProcessor<Vector3>
 {
@@ -77,6 +130,7 @@ public class AddTwoVectors : InputProcessor<Vector3>
         return thing * val;
     }
 }
+
 
 [InitializeOnLoad]
 public class HoldAndRelease : IInputInteraction<float>
@@ -165,4 +219,60 @@ public class HoldAndRelease : IInputInteraction<float>
     {
         
     }
+    
+}
+public class FetchQuest : Quest<GameObject>
+{
+    GameObject start;
+    bool fetched = false;
+    float distance;
+    InputActionMap quests_inputs;
+    InputAction give;
+    public FetchQuest(GameObject goal, GameObject start) : base(goal, start)
+    {
+        this.goal = goal;
+        this.start = start;
+        quests_inputs = new("Quests");
+        PlayerControls controls = new();
+        controls.asset.AddActionMap(quests_inputs);
+        give = quests_inputs.AddAction("Give");
+        var take = quests_inputs.AddAction("Take", binding: "<Keyboard>/m");
+        give.AddBinding("<Keyboard>/f");
+        give.performed += Give_performed;
+        give.Enable();
+        take.Enable();
+        quests_inputs.Enable();
+    }
+    ~FetchQuest()
+    {
+       
+        quests_inputs.Disable();
+        give.performed -= Give_performed;
+    }
+    public override void Progress()
+    {
+        distance = Vector3.Distance(goal.transform.position, start.transform.position);
+        
+
+            fetched = true;
+           
+             
+
+        
+    }
+
+    private void Give_performed(InputAction.CallbackContext obj)
+    {
+        if(fetched && distance <= 10 && obj.performed)
+        {
+            fetched = false;
+            Debug.Log("Hi");
+            Complete();
+        }
+        
+    }
+
+   
+   
+    
 }

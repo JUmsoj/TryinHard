@@ -21,7 +21,7 @@ public class TerrainGen : MonoBehaviour
     [SerializeField] char[] s = new char[3];
     [SerializeField] string l;
     // set this tommorow 11/19/24
-    public Material[] biomes {get; set; }
+    public Material[] biomes;
     // 5 biomes and ten different rotations;
     public Quaternion[] rotations { get; set;  } = new Quaternion[10];
     public int thing;
@@ -30,7 +30,8 @@ public class TerrainGen : MonoBehaviour
     {
         
         Sort();
-        WorldGen(Sectors[UnityEngine.Random.Range(1, Sectors.Length)]);
+        
+        WorldGen(Sectors[UnityEngine.Random.Range(0, Sectors.Length)]);
     }
 
 
@@ -153,15 +154,16 @@ public class TerrainGen : MonoBehaviour
     }
     void CreateAndMove(int permutations, int index)
     {
-        
+        bool x;
         for(int i = 0;i<permutations;i++)
         {
             
             var walker = walkers[Mathf.Min(index, walkers.Count())];
             var Visited = walker.GetComponent<WalkerScript>().Visited;
-            bool x = false;
+             x = false;
             targetpos = walker.GetComponent<WalkerScript>().SimulateMove(1);
-            if (i % 5 == 0)
+            float temp = UnityEngine.Random.Range(1, 10);
+            if (i % temp == 0)
             {
                  x = true;
             }

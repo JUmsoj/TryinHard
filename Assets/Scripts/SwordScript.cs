@@ -11,11 +11,19 @@ using static UnityEditor.Timeline.TimelinePlaybackControls;
 public class SwordScript : MonoBehaviour
 {
     // private string[] attacks;
-    
+
+    private int kills { get; set; }
+    public int kill
+    {
+        get
+        {
+            return kills;
+        }
+    }
     private static List<GameObject> inv;
     private static int selection;
     private Animator anim;
-    
+    public QUESTS quest;
     Quaternion rotate;
     private int directionx;
     private int directionz;
@@ -56,6 +64,17 @@ public class SwordScript : MonoBehaviour
     }
     void Start()
     {
+        try
+        {
+             quest = GameObject.Find("Bow").GetComponent<bowscript>().quest;
+        }
+        catch(Exception)
+        {
+            GameObject.Find("Bow").SetActive(true);
+            quest = GameObject.Find("Bow").GetComponent<bowscript>().quest;
+            GameObject.Find("Bow").SetActive(false);
+
+        }
         anim = GetComponent<Animator>();
         // set this at every Weapon script
 
@@ -138,8 +157,12 @@ public class SwordScript : MonoBehaviour
         var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
         if(collision.gameObject.CompareTag("Enemy") && Player.Inventory.INVENTORY[0] == gameObject)
         {
+            kills++;
             EnemyScript.spawner.count--; 
             Destroy(thing);
+            
+            quest.Quests[0].Progress();
+
         }
         Debug.Log($"Destroyed {thing.name}");
         return;
