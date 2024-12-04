@@ -21,7 +21,8 @@ public class TerrainGen : MonoBehaviour
     [SerializeField] char[] s = new char[3];
     [SerializeField] string l;
     // set this tommorow 11/19/24
-    public Material[] biomes {get; set; }
+    [SerializeField] private Material[] biome_bk;
+    public Material[] biomes { get { return biome_bk; } set { biome_bk = value; } }
     // 5 biomes and ten different rotations;
     public Quaternion[] rotations { get; set;  } = new Quaternion[10];
     public int thing;

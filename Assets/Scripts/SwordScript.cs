@@ -39,7 +39,7 @@ public class SwordScript : MonoBehaviour
     private void Awake()
     {
         controls = new();
-        
+        quest = GameObject.FindAnyObjectByType<bowscript>().quest;
     }
     void OnLeftClick(InputAction.CallbackContext ctx)
     {

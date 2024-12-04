@@ -100,9 +100,9 @@ public class Quest<T>
         {
             quests = GameObject.FindAnyObjectByType<SwordScript>().quest; 
             var type = GetType();
-            
-            
-            return FindInstanceOfThing(type, quests.Quests);
+            var instance = FindInstanceOfThing(type, quests.Quests);
+            Debug.LogError(instance);
+            return instance;
         }
     }
     public bool completed = false;
@@ -290,9 +290,11 @@ public class HoldAndRelease : IInputInteraction<float>
         
             while (GameObject.Find("Bow").GetComponent<bowscript>().stuff < dur && stuff)
             {
-                    var temp = GameObject.Find("Bow").GetComponent<bowscript>().stuff + 1;
+                    decimal temp = (decimal)GameObject.Find("Bow").GetComponent<bowscript>().stuff + 1;
                     yield return new WaitForSeconds(intervals);
-                    GameObject.Find("Bow").GetComponent<bowscript>().stuff = temp;
+            
+                    GameObject.Find("Bow").GetComponent<bowscript>().stuff = (float)temp;
+                    Debug.Log(temp);
                     continue;
 
             }
