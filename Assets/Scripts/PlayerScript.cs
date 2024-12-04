@@ -11,7 +11,8 @@ using UnityEngine.InputSystem;
 public class PlayerScript : MonoBehaviour
 {
 
-    [SerializeField]
+    [SerializeField] private float exp_backdoor;
+    public float exp { get { return exp_backdoor; } set { exp_backdoor = value; } }
     public float thing;
     public PlayerControls controls;
     public Player Inventory;
@@ -186,30 +187,36 @@ public class PlayerScript : MonoBehaviour
     }
     private static void UpdateInventoryLogic()
     {
-        var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
+        
+            var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
         List<GameObject> inv = Player.Inventory.INVENTORY;
         ref int selection = ref EnemyScript.spawner.hand;
-        selection = Mathf.Min(selection, inv.Count-1);
-        GameObject player = GameObject.Find("Player");
-        Activate(inv[selection]);
+        if (inv.Count > 0)
+        {
+
+            selection = Mathf.Clamp(selection, 0, inv.Count - 1);
+            GameObject player = GameObject.Find("Player");
+            Activate(inv[selection]);
 
             // deactivates everything else;
-        if (inv.Count > 1)
+            if (inv.Count > 1)
             {
-            for (int i = 0; i < inv.Count; i++)
-            {
-                if (selection != i)
+                for (int i = 0; i < inv.Count; i++)
                 {
+                    if (selection != i)
+                    {
                         Deactivate(inv[i]);
+                    }
+
                 }
-                
+
             }
-            
-        }
             // special cases
-        if (inv[selection] == player)
-        {
-            player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+            if (inv[selection] == player)
+            {
+                player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+            }
+
         }
         
         

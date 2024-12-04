@@ -7,6 +7,18 @@ using UnityEngine.InputSystem.Interactions;
 using System;
 using System.Net;
 using System.Collections.Generic;
+<<<<<<< Updated upstream
+=======
+using System.Threading.Tasks.Sources;
+using JetBrains.Annotations;
+using System.Linq;
+public class QUESTS : ScriptableObject
+{
+    public Quest<float>[] Quests { get; set; } = new Quest<float>[5];
+    public Quest<GameObject>[] NPCBasedQuests { get; set; } = new Quest<GameObject>[5];
+
+}
+>>>>>>> Stashed changes
 public class bowscript : MonoBehaviour
 {
     public float stuff;
@@ -16,7 +28,13 @@ public class bowscript : MonoBehaviour
     private void Awake()
     {
         controls = new();
+<<<<<<< Updated upstream
         
+=======
+        quest = ScriptableObject.CreateInstance<QUESTS>();
+        quest.Quests[0] = new KillQuest(start:GameObject.Find("sword").GetComponent<SwordScript>().kill, goal:3f, exp:5f);
+        quest.NPCBasedQuests[0] = new FetchQuest(GameObject.Find("Item"), GameObject.Find("NPC"), exp:10f);
+>>>>>>> Stashed changes
     }
     private void OnEnable()
     {
@@ -62,7 +80,131 @@ public class bowscript : MonoBehaviour
         
     }
 }
+<<<<<<< Updated upstream
 
+=======
+public class Quest<T>
+{
+    public QUESTS quests = GameObject.FindFirstObjectByType<bowscript>().quest;
+    int FindInstanceOfThing<s>(Type type, Quest<s>[] array)
+    {
+        var quest = array;
+        for (int i = 0; i < quest.Length; i++)
+        {
+            if (quest[i] != null && quest[i].GetType() == type)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    public virtual int Firstactivequest {
+        
+        get
+        {
+            quests = GameObject.FindAnyObjectByType<SwordScript>().quest; 
+            var type = GetType();
+            
+            
+            return FindInstanceOfThing(type, quests.Quests);
+        }
+    }
+    public bool completed = false;
+    public float exp;
+    public GameObject player = GameObject.FindGameObjectWithTag("Finish");
+     public T start { get; set; }
+    public T goal { get; set; }
+    List<InputAction> Actions { get; set; } = new List<InputAction>();
+
+    T num; // This field is declared but not used. You might want to consider its purpose.
+
+    public Quest(T goal, T start, float exp_val)
+    {
+        this.goal = goal;
+        this.start = start;
+        exp = exp_val;  
+    }
+    public void RemoveInput()
+    {
+        foreach (var i in Actions)
+        {
+            
+            i.Disable();
+
+        }
+        Actions.Clear();
+
+    }
+    public virtual void Progress()
+    {
+        // Implementation for progress could go here
+    }
+    public virtual void Complete()
+    {
+        Debug.Log("completed task");
+        player.GetComponent<PlayerScript>().exp += exp;
+        completed = true;
+               
+    }
+    public void AddInput(Dictionary<string/*name*/, string[]> inputs, InputActionMap map,  Action<InputAction.CallbackContext>[] performed)
+    {
+
+        InputAction action;
+        foreach(var i in inputs.Keys)
+        {
+           
+            if (!map.actions.Contains(map.FindAction(i)))
+            {
+                map.Disable();
+                action = map.AddAction(i);
+                for (int j = 0; j < inputs[i].Length; j++)
+                {
+                    action.AddBinding(new InputBinding(inputs[i][j]));
+                }
+                map.Enable();
+                Actions.Add(action);
+                Debug.LogWarning($"action name: {Actions.Last().name},  Bindings : {Actions.Last().bindings[0]}");
+
+                Debug.LogWarning(action.name);
+                Actions.Last().Enable();
+            }
+            
+            
+           
+               
+            
+            
+        }
+      
+       
+       
+       for(int i = 0; i < Actions.Count;i++)
+        {
+            Actions[i].performed += performed[i];
+        }
+    }
+}
+
+public class KillQuest : Quest<float>
+{
+    float kills;
+    public KillQuest(float goal,  float start, float exp) : base(goal, start, exp)
+    {
+        this.goal = goal;
+        kills = 0;
+        this.start = start;
+    }
+    public override void Progress()
+    {
+        kills = GameObject.Find("sword").GetComponent<SwordScript>().kill;
+        if(start + goal >= kills && !completed)
+        {
+            Complete();
+        }
+      
+    }
+}
+>>>>>>> Stashed changes
 [InitializeOnLoad]
 public class AddTwoVectors : InputProcessor<Vector3>
 {
@@ -165,4 +307,66 @@ public class HoldAndRelease : IInputInteraction<float>
     {
         
     }
+<<<<<<< Updated upstream
+=======
+    
+}
+public class FetchQuest : Quest<GameObject>
+{
+
+    bool fetched = false;
+    float distance;
+    InputActionMap quests_inputs;
+    InputAction give;
+    
+    public FetchQuest(GameObject goal, GameObject start, float exp) : base(goal, start, exp)
+    {
+        this.goal = goal;
+        this.start = start;
+        quests_inputs = new("Quests");
+        PlayerControls controls = new();
+        AddInput(new Dictionary<string, string[]> { ["Give"] = new string[] { "<Keyboard>/f" }, ["Take"] = new string[] { "<Keyboard>/m" } }, controls.Main,  new Action<InputAction.CallbackContext>[] {Give_performed, Take_performed});
+    }
+    
+    void Take_performed(InputAction.CallbackContext ctx)
+    {
+        
+        distance = Vector3.Distance(goal.transform.position, player.transform.position);
+
+        if (distance < 10 && !fetched)
+        {
+            fetched = true;
+            Debug.LogWarning("takes");
+            ref var inv = ref player.GetComponent<PlayerScript>().Inventory.INVENTORY;
+            inv.Add(goal);
+            PlayerScript.IsInventoryExists = true;
+
+        }
+             
+
+        
+    }
+
+    private void Give_performed(InputAction.CallbackContext obj)
+    {
+        ref var inv = ref player.GetComponent<PlayerScript>().Inventory.INVENTORY;
+        inv.Remove(goal);
+        distance = Vector3.Distance(goal.transform.position, start.transform.position);
+        if(fetched && distance <= 10 && obj.performed && !completed)
+        {
+            Debug.LogWarning("Gives");
+            fetched = false;
+            Debug.Log("Hi");
+            
+            PlayerScript.Deactivate(goal);
+            Complete();
+        }
+       
+        
+    }
+
+   
+   
+    
+>>>>>>> Stashed changes
 }
