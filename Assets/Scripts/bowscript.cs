@@ -7,8 +7,7 @@ using UnityEngine.InputSystem.Interactions;
 using System;
 using System.Net;
 using System.Collections.Generic;
-<<<<<<< Updated upstream
-=======
+
 using System.Threading.Tasks.Sources;
 using JetBrains.Annotations;
 using System.Linq;
@@ -18,9 +17,10 @@ public class QUESTS : ScriptableObject
     public Quest<GameObject>[] NPCBasedQuests { get; set; } = new Quest<GameObject>[5];
 
 }
->>>>>>> Stashed changes
+
 public class bowscript : MonoBehaviour
 {
+    public QUESTS quest;
     public float stuff;
     private GameObject parent;
     private PlayerControls controls;
@@ -28,13 +28,11 @@ public class bowscript : MonoBehaviour
     private void Awake()
     {
         controls = new();
-<<<<<<< Updated upstream
-        
-=======
+
         quest = ScriptableObject.CreateInstance<QUESTS>();
         quest.Quests[0] = new KillQuest(start:GameObject.Find("sword").GetComponent<SwordScript>().kill, goal:3f, exp:5f);
         quest.NPCBasedQuests[0] = new FetchQuest(GameObject.Find("Item"), GameObject.Find("NPC"), exp:10f);
->>>>>>> Stashed changes
+
     }
     private void OnEnable()
     {
@@ -80,9 +78,7 @@ public class bowscript : MonoBehaviour
         
     }
 }
-<<<<<<< Updated upstream
 
-=======
 public class Quest<T>
 {
     public QUESTS quests = GameObject.FindFirstObjectByType<bowscript>().quest;
@@ -204,7 +200,7 @@ public class KillQuest : Quest<float>
       
     }
 }
->>>>>>> Stashed changes
+
 [InitializeOnLoad]
 public class AddTwoVectors : InputProcessor<Vector3>
 {
@@ -307,8 +303,7 @@ public class HoldAndRelease : IInputInteraction<float>
     {
         
     }
-<<<<<<< Updated upstream
-=======
+
     
 }
 public class FetchQuest : Quest<GameObject>
@@ -366,7 +361,5 @@ public class FetchQuest : Quest<GameObject>
     }
 
    
-   
-    
->>>>>>> Stashed changes
+  
 }

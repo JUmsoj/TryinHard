@@ -11,10 +11,9 @@ using static UnityEditor.Timeline.TimelinePlaybackControls;
 public class SwordScript : MonoBehaviour
 {
     // private string[] attacks;
-<<<<<<< Updated upstream
-    
-=======
+
     Quest<float> startquest;
+    public QUESTS quest; 
     private int kills { get; set; }
     public int kill
     {
@@ -23,7 +22,7 @@ public class SwordScript : MonoBehaviour
             return kills;
         }
     }
->>>>>>> Stashed changes
+
     private static List<GameObject> inv;
     private static int selection;
     private Animator anim;
@@ -153,8 +152,7 @@ public class SwordScript : MonoBehaviour
         {
             EnemyScript.spawner.count--; 
             Destroy(thing);
-<<<<<<< Updated upstream
-=======
+
             if (startquest.Firstactivequest != -1)
             {
                 quest.Quests[startquest.Firstactivequest].Progress();
@@ -164,7 +162,7 @@ public class SwordScript : MonoBehaviour
 
                     
 
->>>>>>> Stashed changes
+
         }
         Debug.Log($"Destroyed {thing.name}");
         return;
