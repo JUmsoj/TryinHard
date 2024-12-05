@@ -1345,6 +1345,7 @@ MonoBehaviour:
   biome_bk:
   - {fileID: 2100000, guid: 88f7cb9abdede7b49835cb96ba2c3562, type: 2}
   - {fileID: 2100000, guid: 10ed2d988f991b94081a7a50b971caab, type: 2}
+  num: 3
   thing: 0
 --- !u!1 &1591921027 stripped
 GameObject:

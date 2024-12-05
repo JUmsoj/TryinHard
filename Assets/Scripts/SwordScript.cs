@@ -145,18 +145,18 @@ public class SwordScript : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        
+        ref var enemy_count = ref EnemyScript.spawner.count;
         GameObject thing = collision.gameObject;
         var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
         if(collision.gameObject.CompareTag("Enemy") && Player.Inventory.INVENTORY[0] == gameObject)
         {
-            EnemyScript.spawner.count--; 
+            enemy_count--; 
             Destroy(thing);
-
-            if (startquest.Firstactivequest != -1)
+            int startquesty = startquest.Firstactivequest;
+            if (startquesty != -1)
             {
-                quest.Quests[startquest.Firstactivequest].Progress();
-                quest.Quests[startquest.Firstactivequest] = null;
+                quest.Quests[startquesty].Progress();
+                quest.Quests[startquesty] = null;
             }
             
 

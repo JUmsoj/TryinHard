@@ -15,16 +15,14 @@ public class EnemyScript : MonoBehaviour
     public static Spawner spawner;
     private bool iscooldown = false;
     public bool touchingplayer = false;
+    private TerrainGen[] terrainGens;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         mr = GetComponent<MeshRenderer>();
         GetComponent<Rigidbody>().mass *= 7f;
         player = GameObject.Find("Player");
-        if (gameObject.name != "Enemy")
-        {
-            gameObject.transform.position = new Vector3(0, 2, 0);
-        }
+       
     }
     void Start()
     {
@@ -64,10 +62,11 @@ public class EnemyScript : MonoBehaviour
     }
     private IEnumerator cooldown()
     {
+        var GameObjects = GameObject.FindGameObjectsWithTag("Floor");
         iscooldown = true;
         yield return new WaitForSeconds(5);
         iscooldown = false;
-        spawner.spawn();
+        spawner.spawn(GameObjects);
         yield break;
     }
     private IEnumerator Fight()

@@ -30,9 +30,13 @@ public class bowscript : MonoBehaviour
         controls = new();
 
         quest = ScriptableObject.CreateInstance<QUESTS>();
-        quest.Quests[0] = new KillQuest(start:GameObject.Find("sword").GetComponent<SwordScript>().kill, goal:3f, exp:5f);
-        quest.NPCBasedQuests[0] = new FetchQuest(GameObject.Find("Item"), GameObject.Find("NPC"), exp:10f);
+        StartingQuests();
 
+    }
+    void StartingQuests()
+    {
+        quest.Quests[0] = new KillQuest(start: GameObject.Find("sword").GetComponent<SwordScript>().kill, goal: 3f, exp: 5f);
+        quest.NPCBasedQuests[0] = new FetchQuest(GameObject.Find("Item"), GameObject.Find("NPC"), exp: 10f);
     }
     private void OnEnable()
     {

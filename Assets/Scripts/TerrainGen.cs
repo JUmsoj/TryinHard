@@ -11,6 +11,7 @@ using UnityEditor.Experimental.GraphView;
 using System.Runtime.InteropServices;
 public class TerrainGen : MonoBehaviour
 {
+   
     public GameObject other;
     Vector3 targetpos;
     private List<GameObject> walkers = new List<GameObject>();
@@ -22,6 +23,7 @@ public class TerrainGen : MonoBehaviour
     [SerializeField] string l;
     // set this tommorow 11/19/24
     [SerializeField] private Material[] biome_bk;
+    public int num;
     public Material[] biomes { get { return biome_bk; } set { biome_bk = value; } }
     // 5 biomes and ten different rotations;
     public Quaternion[] rotations { get; set;  } = new Quaternion[10];
