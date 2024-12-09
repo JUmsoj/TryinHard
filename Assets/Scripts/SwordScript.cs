@@ -68,7 +68,7 @@ public class SwordScript : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
-        startquest = quest.Quests[quest.Quests[0].Firstactivequest];
+        
         // set this at every Weapon script
 
 
@@ -145,6 +145,10 @@ public class SwordScript : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
+        if(startquest == null)
+        {
+            startquest = quest.Quests[quest.Quests[0].Firstactivequest];
+        }
         ref var enemy_count = ref EnemyScript.spawner.count;
         GameObject thing = collision.gameObject;
         var Player = GameObject.Find("Player").GetComponent<PlayerScript>();

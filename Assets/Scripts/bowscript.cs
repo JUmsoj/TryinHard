@@ -25,17 +25,30 @@ public class bowscript : MonoBehaviour
     private GameObject parent;
     private PlayerControls controls;
     private Rigidbody rb;
+    GameObject sword;
+    GameObject bow;
     private void Awake()
     {
+        sword = GameObject.Find("sword");
+        bow = GameObject.Find("Bow");
         controls = new();
 
         quest = ScriptableObject.CreateInstance<QUESTS>();
-        StartingQuests();
+        
 
     }
-    void StartingQuests()
+    public void StartingQuests()
     {
-        quest.Quests[0] = new KillQuest(start: GameObject.Find("sword").GetComponent<SwordScript>().kill, goal: 3f, exp: 5f);
+        try
+        {
+            quest.Quests[0] = new KillQuest(start: sword.GetComponent<SwordScript>().kill, goal: 3f, exp: 5f);
+        }
+        catch(Exception)
+        {
+            sword.SetActive(true);
+            quest.Quests[0] = new KillQuest(start: GameObject.Find("sword").GetComponent<SwordScript>().kill, goal: 3f, exp: 5f);
+            sword.SetActive(false);
+        }
         quest.NPCBasedQuests[0] = new FetchQuest(GameObject.Find("Item"), GameObject.Find("NPC"), exp: 10f);
     }
     private void OnEnable()
@@ -115,7 +128,8 @@ public class Quest<T>
      public T start { get; set; }
     public T goal { get; set; }
     List<InputAction> Actions { get; set; } = new List<InputAction>();
-
+    public static readonly int[] levelups = new int[10] {1, 20, 40, 60, 70, 74, 80, 160, 180, 200};
+    public static int level = 0;
     T num; // This field is declared but not used. You might want to consider its purpose.
 
     public Quest(T goal, T start, float exp_val)
@@ -139,11 +153,16 @@ public class Quest<T>
     {
         // Implementation for progress could go here
     }
-    public virtual void Complete()
+    public void Complete()
     {
         Debug.Log("completed task");
         player.GetComponent<PlayerScript>().exp += exp;
         completed = true;
+        if (levelups[level] >= GameObject.FindAnyObjectByType<PlayerScript>().exp)
+        {
+            level++;
+            Debug.Log("Leveled Up");
+        }
                
     }
     public void AddInput(Dictionary<string/*name*/, string[]> inputs, InputActionMap map,  Action<InputAction.CallbackContext>[] performed)

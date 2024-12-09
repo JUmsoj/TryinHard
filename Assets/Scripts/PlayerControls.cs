@@ -80,6 +80,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""HoldAndRelease(duration=6,max=10,intervals=1)"",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Talk"",
+                    ""type"": ""Button"",
+                    ""id"": ""2f022c64-2471-44c7-80ef-431dc8635913"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -269,6 +278,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Bow"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9f761e8b-f540-4556-906f-c2d4cf881c26"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Talk"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -283,6 +303,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Main_Sword = m_Main.FindAction("Sword", throwIfNotFound: true);
         m_Main_Inv = m_Main.FindAction("Inv", throwIfNotFound: true);
         m_Main_Bow = m_Main.FindAction("Bow", throwIfNotFound: true);
+        m_Main_Talk = m_Main.FindAction("Talk", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -355,6 +376,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_Sword;
     private readonly InputAction m_Main_Inv;
     private readonly InputAction m_Main_Bow;
+    private readonly InputAction m_Main_Talk;
     public struct MainActions
     {
         private @PlayerControls m_Wrapper;
@@ -365,6 +387,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Sword => m_Wrapper.m_Main_Sword;
         public InputAction @Inv => m_Wrapper.m_Main_Inv;
         public InputAction @Bow => m_Wrapper.m_Main_Bow;
+        public InputAction @Talk => m_Wrapper.m_Main_Talk;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -392,6 +415,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Bow.started += instance.OnBow;
             @Bow.performed += instance.OnBow;
             @Bow.canceled += instance.OnBow;
+            @Talk.started += instance.OnTalk;
+            @Talk.performed += instance.OnTalk;
+            @Talk.canceled += instance.OnTalk;
         }
 
         private void UnregisterCallbacks(IMainActions instance)
@@ -414,6 +440,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Bow.started -= instance.OnBow;
             @Bow.performed -= instance.OnBow;
             @Bow.canceled -= instance.OnBow;
+            @Talk.started -= instance.OnTalk;
+            @Talk.performed -= instance.OnTalk;
+            @Talk.canceled -= instance.OnTalk;
         }
 
         public void RemoveCallbacks(IMainActions instance)
@@ -439,5 +468,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSword(InputAction.CallbackContext context);
         void OnInv(InputAction.CallbackContext context);
         void OnBow(InputAction.CallbackContext context);
+        void OnTalk(InputAction.CallbackContext context);
     }
 }

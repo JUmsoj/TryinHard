@@ -22,10 +22,12 @@ public class Spawner : ScriptableObject
         // wave system
         if (oneatatime && count == 0)
         {
+            oneatatime = false;
             int random_number = UnityEngine.Random.Range(0, spawns.Count());
             ref int num = ref spawns[random_number].GetComponent<TerrainGen>().num;
-            num++;
-            oneatatime = false;
+            
+            num *=  1+spawns[random_number].GetComponent<TerrainGen>().difficulty;
+           
             for (int i = 0; i < num; i++)
             {
                 try
@@ -33,6 +35,7 @@ public class Spawner : ScriptableObject
                     var y = Instantiate(enemy);
                     y.tag = "Enemy";
                     y.transform.position = new Vector3(spawns[random_number].transform.position.x, 3, spawns[random_number].transform.position.z);
+                    y.GetComponent<Rigidbody>().linearVelocity *= long.MaxValue;
                 }
                 catch (ArgumentException)
                 {
