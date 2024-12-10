@@ -44,6 +44,7 @@ public class OldManScript : MonoBehaviour
         {
             for(int i = 0; i < fQuest.Count(); i++)
             {
+                AddToArray(bow.quest.Quests, fQuest[i], fQuest);
                 AddToArray(bow.quest.Quests, fQuest[i]);
             }
         }
@@ -59,6 +60,19 @@ public class OldManScript : MonoBehaviour
         }
         array[array.Length-1] = obj;
     }
+    void AddToArray<T>(T[] array, T obj, T[] thing_taken_out_of)
+    {
+        for (int i = 0; i < array.Length; i++)
+        {
+            if (array[i] == null)
+            {
+                thing_taken_out_of[thing_taken_out_of.Count()-1] = default(T);
+                array[i] = obj;
+                return;
+            }
+        }
+    }
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
