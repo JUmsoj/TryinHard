@@ -102,7 +102,7 @@ public class PlayerScript : MonoBehaviour
 
                 var temp = 5f/2f;
                 move = temp * controls.Main.Move.ReadValue<Vector3>();
-                print(move);
+               
                 
                 move = transform.TransformDirection(move);
                 cc.Move(Thing(move));

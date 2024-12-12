@@ -13,8 +13,8 @@ using JetBrains.Annotations;
 using System.Linq;
 public class QUESTS : ScriptableObject
 {
-    public Quest<float>[] Quests { get; set; } = new Quest<float>[5];
-    public Quest<GameObject>[] NPCBasedQuests { get; set; } = new Quest<GameObject>[5];
+    public Quest<float>[] Quests { get; set; } = new Quest<float>[7];
+    public Quest<GameObject>[] NPCBasedQuests { get; set; } = new Quest<GameObject>[7];
 
 }
 
@@ -39,6 +39,7 @@ public class bowscript : MonoBehaviour
     }
     public void StartingQuests()
     {
+        Debug.Log("Starting Quests");
         try
         {
             quest.Quests[0] = new KillQuest(start: sword.GetComponent<SwordScript>().kill, goal: 3f, exp: 5f);
@@ -50,6 +51,7 @@ public class bowscript : MonoBehaviour
             sword.SetActive(false);
         }
         quest.NPCBasedQuests[0] = new FetchQuest(GameObject.Find("Item"), GameObject.Find("NPC"), exp: 10f);
+      
     }
     private void OnEnable()
     {
@@ -122,8 +124,8 @@ public class Quest<T>
             return instance;
         }
     }
-    public bool completed = false;
-    public float exp;
+    protected bool completed = false;
+    protected float exp;
     public GameObject player = GameObject.FindGameObjectWithTag("Finish");
      public T start { get; set; }
     public T goal { get; set; }
@@ -153,9 +155,9 @@ public class Quest<T>
     {
         // Implementation for progress could go here
     }
-    public void Complete()
+    protected void Complete()
     {
-        Debug.Log("completed task");
+        Debug.LogError("completed task");
         player.GetComponent<PlayerScript>().exp += exp;
         completed = true;
         if (levelups[level] >= GameObject.FindAnyObjectByType<PlayerScript>().exp)
@@ -330,6 +332,44 @@ public class HoldAndRelease : IInputInteraction<float>
     }
 
     
+}
+public class FollowQuest : Quest<GameObject>
+{
+    private float distance;
+    bool called = false;
+    public FollowQuest(GameObject goal, GameObject start, float exp_val) : base(goal, start, exp_val)
+    {
+        distance = Vector3.Distance(goal.transform.position, start.transform.position);
+       
+    }
+
+    public override void Progress()
+    {
+        if (distance > 0)
+        {
+            distance = Vector3.Distance(goal.transform.position, start.transform.position);
+        }
+        if (distance !> 10 && !called)
+        {
+            Break();
+        }
+        else if(called)
+        {
+            exp = 0;
+            distance = 0;
+        }
+    }
+    IEnumerator Break()
+    {
+        Debug.Log("Hey");
+        yield return new WaitForSeconds(2);
+        distance = Vector3.Distance(goal.transform.position, start.transform.position);
+        if (distance! > 10)
+        {
+            called = true;
+            yield break;
+        }
+    }
 }
 public class FetchQuest : Quest<GameObject>
 {

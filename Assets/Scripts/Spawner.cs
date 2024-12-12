@@ -1,14 +1,17 @@
+
 using Unity.VisualScripting.FullSerializer;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+
 public class Spawner : ScriptableObject
 {
+    const int ysize = 3;
     public int hand = 0;
     public int count;
 
-    public GameObject enemy;
+    [SerializeField] private GameObject enemy;
     private bool oneatatime = true;
 
     private void Awake()
@@ -30,26 +33,38 @@ public class Spawner : ScriptableObject
            
             for (int i = 0; i < num; i++)
             {
-                try
-                {
+               
+                   
                     var y = Instantiate(enemy);
-                    y.tag = "Enemy";
+                    
                     y.transform.position = new Vector3(spawns[random_number].transform.position.x, 3, spawns[random_number].transform.position.z);
-                    y.GetComponent<Rigidbody>().linearVelocity *= long.MaxValue;
-                }
-                catch (ArgumentException)
-                {
-                    enemy = Resources.Load<GameObject>("Enemy");
-                    i--;
-                    continue;
-                }
+                    
+                
+                
             }
-            Debug.Log("thing");
+           
             oneatatime = true;
 
 
 
         }
 
+    }
+    public void SpawnInOnePlace(float zlow, float zhigh, float xlow, float xhigh, int times)
+    {
+        for (int count = 0; count < times; count++) {
+            Vector3 selected_one = new Vector3(UnityEngine.Random.Range(xlow, xhigh), 2^3, UnityEngine.Random.Range(zlow, zhigh));
+            Instantiate(enemy);
+
+        }
+    }
+    public void SpawnInOnePlace(int zlow, int zhigh, int xlow, int xhigh, int times)
+    {
+        for (int count = 0; count < times; count++)
+        {
+            Vector3 selected_one = new Vector3(UnityEngine.Random.Range(xlow, xhigh), 2^3, UnityEngine.Random.Range(zlow, zhigh));
+            Instantiate(enemy);
+
+        }
     }
 }

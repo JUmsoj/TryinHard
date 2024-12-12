@@ -1,6 +1,8 @@
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 public class OldManScript : MonoBehaviour
 {
     [SerializeField] private Quest<float>[] fQuest = new Quest<float>[5];
@@ -9,6 +11,7 @@ public class OldManScript : MonoBehaviour
     public Quest<GameObject>[] gquest {  get { return gQuest; } set { gQuest = value; } }
     [SerializeField]private PlayerControls controls;
     [SerializeField] private GameObject player;
+    [SerializeField] int length;
     private float distance { get; set; }
     [SerializeField]private bowscript bow;
     bool gavequests = false;
@@ -19,6 +22,12 @@ public class OldManScript : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Finish");
         bow = GameObject.FindAnyObjectByType<bowscript>();
         fQuest[0] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
+        fQuest[1] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
+        fQuest[2] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
+        fQuest[3] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
+        fQuest[4] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
+        
+        length = fQuest.Count();
     }
     private void OnEnable()
     {
@@ -44,8 +53,8 @@ public class OldManScript : MonoBehaviour
         {
             for(int i = 0; i < fQuest.Count(); i++)
             {
-                AddToArray(bow.quest.Quests, fQuest[i], fQuest);
-                AddToArray(bow.quest.Quests, fQuest[i]);
+                AddToArray(bow.quest.Quests, i, fQuest);
+                
             }
         }
     }
@@ -60,14 +69,16 @@ public class OldManScript : MonoBehaviour
         }
         array[array.Length-1] = obj;
     }
-    void AddToArray<T>(T[] array, T obj, T[] thing_taken_out_of)
+    void AddToArray<T>(T[] array, int obj, T[] thing_taken_out_of)
     {
-        for (int i = 0; i < array.Length; i++)
+        for (int i = 0; i < array.Count(); i++)
         {
             if (array[i] == null)
             {
-                thing_taken_out_of[thing_taken_out_of.Count()-1] = default(T);
-                array[i] = obj;
+                array[i] = thing_taken_out_of[obj];
+                thing_taken_out_of[obj] = default;
+                length--;
+                Debug.Log(length);
                 return;
             }
         }
