@@ -10,6 +10,7 @@ TagManager:
   - Tile
   - Floor
   - Section
+  - Grandpa
   layers:
   - Default
   - TransparentFX

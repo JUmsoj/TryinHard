@@ -635,9 +635,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6022881481314550544, guid: ad66522a6d1fe1640a46d11c950a1eb4, type: 3}
+      propertyPath: fQuest.Array.size
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6939489608515079027, guid: ad66522a6d1fe1640a46d11c950a1eb4, type: 3}
       propertyPath: m_Name
       value: QuestGiver
+      objectReference: {fileID: 0}
+    - target: {fileID: 6939489608515079027, guid: ad66522a6d1fe1640a46d11c950a1eb4, type: 3}
+      propertyPath: m_TagString
+      value: Grandpa
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

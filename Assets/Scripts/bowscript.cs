@@ -97,10 +97,10 @@ public class bowscript : MonoBehaviour
         
     }
 }
-
+[Serializable]
 public class Quest<T>
 {
-    public QUESTS quests = GameObject.FindFirstObjectByType<bowscript>().quest;
+    protected QUESTS quests = GameObject.FindFirstObjectByType<bowscript>().quest;
     int FindInstanceOfThing<s>(Type type, Quest<s>[] array)
     {
         var quest = array;
@@ -126,7 +126,7 @@ public class Quest<T>
     }
     protected bool completed = false;
     protected float exp;
-    public GameObject player = GameObject.FindGameObjectWithTag("Finish");
+    protected GameObject player = GameObject.FindGameObjectWithTag("Finish");
      public T start { get; set; }
     public T goal { get; set; }
     List<InputAction> Actions { get; set; } = new List<InputAction>();
@@ -138,7 +138,8 @@ public class Quest<T>
     {
         this.goal = goal;
         this.start = start;
-        exp = exp_val;  
+        exp = exp_val;
+        Debug.Log("Heyyy");
     }
     public void RemoveInput()
     {

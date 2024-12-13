@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -5,8 +6,10 @@ using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 public class OldManScript : MonoBehaviour
 {
-    [SerializeField] private Quest<float>[] fQuest = new Quest<float>[5];
-    [SerializeField] private Quest<GameObject>[] gQuest = new Quest<GameObject>[5];
+    
+    private const int questslength = 5;
+    Quest<float>[] fQuest = new Quest<float>[questslength];
+     Quest<GameObject>[] gQuest = new Quest<GameObject>[questslength];   
     public Quest<float>[] quest { get { return fQuest; } set { fQuest = value; } }
     public Quest<GameObject>[] gquest {  get { return gQuest; } set { gQuest = value; } }
     [SerializeField]private PlayerControls controls;
@@ -15,18 +18,20 @@ public class OldManScript : MonoBehaviour
     private float distance { get; set; }
     [SerializeField]private bowscript bow;
     bool gavequests = false;
+    private bool tags;
+    private SwordScript sword;
     void Awake()
     {
+        sword = GameObject.FindAnyObjectByType<SwordScript>();
+        tags = gameObject.CompareTag("Grandpa");
         controls = new();
-        
+       
         player = GameObject.FindGameObjectWithTag("Finish");
         bow = GameObject.FindAnyObjectByType<bowscript>();
-        fQuest[0] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
-        fQuest[1] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
-        fQuest[2] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
-        fQuest[3] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
-        fQuest[4] = new KillQuest(3f, GameObject.FindAnyObjectByType<SwordScript>().kill, 5f);
-        
+        if(tags)
+        {
+            Normal();
+        }
         length = fQuest.Count();
     }
     private void OnEnable()
@@ -43,7 +48,7 @@ public class OldManScript : MonoBehaviour
     {
         distance = Vector3.Distance(gameObject.transform.position, player.transform.position);
         Debug.LogWarning("Pressed");
-        if (distance < 10 && !gavequests)
+        if (distance < 10 && !gavequests && tags)
         {
             gavequests = true;
             bow.StartingQuests();
@@ -51,12 +56,28 @@ public class OldManScript : MonoBehaviour
         }
         else if (distance < 10 && gavequests)
         {
-            for(int i = 0; i < fQuest.Count(); i++)
+            for(int i = 0; i < questslength; i++)
             {
                 AddToArray(bow.quest.Quests, i, fQuest);
-                
+                AddToArray(bow.quest.NPCBasedQuests, i, gQuest);
             }
         }
+    }
+    void Special()
+    {
+        throw new NotImplementedException();
+    }
+    void Normal()
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            var item = GameObject.Find("Item");
+            var npc = GameObject.Find("NPC");
+            fQuest[i] = new KillQuest(5f, sword.kill, 5f);
+            gQuest[i] = new FetchQuest(item, npc, 10f);
+            
+        }
+
     }
     void AddToArray<T>(T[] array, T obj)
     {
@@ -71,12 +92,14 @@ public class OldManScript : MonoBehaviour
     }
     void AddToArray<T>(T[] array, int obj, T[] thing_taken_out_of)
     {
-        for (int i = 0; i < array.Count(); i++)
+        for (int i = 0; i < array.Length; i++)
         {
             if (array[i] == null)
             {
-                array[i] = thing_taken_out_of[obj];
+                T objects = thing_taken_out_of[obj];
                 thing_taken_out_of[obj] = default;
+                array[i] = objects;
+                
                 length--;
                 Debug.Log(length);
                 return;
