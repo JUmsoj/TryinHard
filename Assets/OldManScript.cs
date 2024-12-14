@@ -1,17 +1,32 @@
 using System;
 using System.Linq;
+using Unity.Properties;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 public class OldManScript : MonoBehaviour
 {
-    
+    struct quest_option<T>
+    {
+
+        
+        public quest_option(Type[] Types)
+        {
+            types = Types;
+            quests = new T[5];
+        }
+        public Type[] types;
+        public T[] quests;
+    }
+    private quest_option<Quest<float>> fquest_option = new(new Type[] {typeof(KillQuest)});
+    private quest_option<Quest<GameObject>> fquest_option_object = new(new Type[] { typeof(FetchQuest) });
+    private Type[] gtypes = new Type[] {typeof(FetchQuest), typeof(FollowQuest)};
+    private Type[] ftypes;
     private const int questslength = 5;
     Quest<float>[] fQuest = new Quest<float>[questslength];
      Quest<GameObject>[] gQuest = new Quest<GameObject>[questslength];   
-    public Quest<float>[] quest { get { return fQuest; } set { fQuest = value; } }
-    public Quest<GameObject>[] gquest {  get { return gQuest; } set { gQuest = value; } }
+    
     [SerializeField]private PlayerControls controls;
     [SerializeField] private GameObject player;
     [SerializeField] int length;
@@ -28,11 +43,15 @@ public class OldManScript : MonoBehaviour
        
         player = GameObject.FindGameObjectWithTag("Finish");
         bow = GameObject.FindAnyObjectByType<bowscript>();
-        if(tags)
+        if(!!tags)
         {
             Normal();
         }
-        length = fQuest.Count();
+        else
+        {
+            Special();
+        }
+        
     }
     private void OnEnable()
     {
@@ -58,8 +77,8 @@ public class OldManScript : MonoBehaviour
         {
             for(int i = 0; i < questslength; i++)
             {
-                AddToArray(bow.quest.Quests, i, fQuest);
-                AddToArray(bow.quest.NPCBasedQuests, i, gQuest);
+                AddToArray(bow.quest.Quests, i, fquest_option.quests);
+                AddToArray(bow.quest.NPCBasedQuests, i, fquest_option_object.quests);
             }
         }
     }
@@ -69,13 +88,23 @@ public class OldManScript : MonoBehaviour
     }
     void Normal()
     {
+        const int random_num = 0;
         for(int i = 0; i < 5; i++)
         {
+            
+            
             var item = GameObject.Find("Item");
             var npc = GameObject.Find("NPC");
-            fQuest[i] = new KillQuest(5f, sword.kill, 5f);
-            gQuest[i] = new FetchQuest(item, npc, 10f);
-            
+            fquest_option.quests[i] = (Quest<float>)Activator.CreateInstance(fquest_option.types[random_num], 3f, sword.kill, 5f);
+            fquest_option_object.quests[i] = (Quest<GameObject>)Activator.CreateInstance(fquest_option_object.types[random_num], item, npc, 10f);
+            if (fquest_option.quests[i] != null)
+            {
+                Debug.LogWarning("Hey");
+            }
+            if (fquest_option_object.quests[i] != null)
+            {
+                Debug.LogWarning("Hey Twice");
+            }
         }
 
     }

@@ -13,8 +13,8 @@ using JetBrains.Annotations;
 using System.Linq;
 public class QUESTS : ScriptableObject
 {
-    public Quest<float>[] Quests { get; set; } = new Quest<float>[7];
-    public Quest<GameObject>[] NPCBasedQuests { get; set; } = new Quest<GameObject>[7];
+    public Quest<float>[] Quests { get; set; } = new Quest<float>[5];
+    public Quest<GameObject>[] NPCBasedQuests { get; set; } = new Quest<GameObject>[5];
 
 }
 
@@ -147,8 +147,9 @@ public class Quest<T>
         {
             
             i.Disable();
-
+            
         }
+        
         Actions.Clear();
 
     }
@@ -387,6 +388,7 @@ public class FetchQuest : Quest<GameObject>
         quests_inputs = new("Quests");
         PlayerControls controls = new();
         AddInput(new Dictionary<string, string[]> { ["Give"] = new string[] { "<Keyboard>/f" }, ["Take"] = new string[] { "<Keyboard>/m" } }, controls.Main,  new Action<InputAction.CallbackContext>[] {Give_performed, Take_performed});
+        controls.Main.Disable();
     }
     
     void Take_performed(InputAction.CallbackContext ctx)
