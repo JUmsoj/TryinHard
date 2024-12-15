@@ -100,7 +100,7 @@ public class bowscript : MonoBehaviour
 [Serializable]
 public class Quest<T>
 {
-    protected QUESTS quests = GameObject.FindFirstObjectByType<bowscript>().quest;
+    static protected QUESTS quests = GameObject.FindFirstObjectByType<bowscript>().quest;
     int FindInstanceOfThing<s>(Type type, Quest<s>[] array)
     {
         var quest = array;
@@ -124,7 +124,7 @@ public class Quest<T>
             return instance;
         }
     }
-    protected bool completed = false;
+    public bool completed = false;
     protected float exp;
     protected GameObject player = GameObject.FindGameObjectWithTag("Finish");
      public T start { get; set; }
@@ -157,7 +157,7 @@ public class Quest<T>
     {
         // Implementation for progress could go here
     }
-    protected void Complete()
+    public void Complete()
     {
         Debug.LogError("completed task");
         player.GetComponent<PlayerScript>().exp += exp;
@@ -167,6 +167,7 @@ public class Quest<T>
             level++;
             Debug.Log("Leveled Up");
         }
+        
                
     }
     public void AddInput(Dictionary<string/*name*/, string[]> inputs, InputActionMap map,  Action<InputAction.CallbackContext>[] performed)
@@ -211,18 +212,23 @@ public class Quest<T>
 public class KillQuest : Quest<float>
 {
     float kills;
+    private float thing;
     public KillQuest(float goal,  float start, float exp) : base(goal, start, exp)
     {
         this.goal = goal;
         kills = 0;
         this.start = start;
+        thing = start + goal;
     }
     public override void Progress()
     {
-        kills = GameObject.Find("sword").GetComponent<SwordScript>().kill;
-        if(start + goal >= kills && !completed)
+        Debug.LogWarning("PROGRESS");
+        kills = GameObject.FindFirstObjectByType<SwordScript>().kill;
+        Debug.LogError(thing - kills);
+        if((thing - kills) <= 0 && !completed)
         {
             Complete();
+            GameObject.FindFirstObjectByType<SwordScript>().kill -= 3;
         }
       
     }

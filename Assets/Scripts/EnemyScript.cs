@@ -122,6 +122,10 @@ public class EnemyScript : MonoBehaviour
                 Debug.LogError("Enemy captured crate");
             }
         }
+        if(collision.gameObject.name == "sword")
+        {
+            GameObject.FindFirstObjectByType<SwordScript>().kill++;
+        }
     }
     void EnemyCapture(GameObject Captor, GameObject crate)
     {

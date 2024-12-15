@@ -21,6 +21,10 @@ public class SwordScript : MonoBehaviour
         {
             return kills;
         }
+        set
+        {
+            kills = value;
+        }
     }
 
     private static List<GameObject> inv;
@@ -160,6 +164,7 @@ public class SwordScript : MonoBehaviour
             if (startquesty != -1)
             {
                 quest.Quests[startquesty].Progress();
+                if (quest.Quests[startquesty].completed) 
                 quest.Quests[startquesty] = null;
             }
             

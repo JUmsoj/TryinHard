@@ -26,6 +26,7 @@ public class PlayerScript : MonoBehaviour
     float speed = 0.001f;
     Transform trans;
     public Transform cam;
+    public float time;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
@@ -63,6 +64,7 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        time += Time.deltaTime;
         if (IsInventoryExists)
         {
             UpdateInventoryLogic();

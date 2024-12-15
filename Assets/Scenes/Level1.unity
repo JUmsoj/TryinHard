@@ -2114,6 +2114,7 @@ MonoBehaviour:
   Inventory: {fileID: 0}
   x: 0
   cam: {fileID: 0}
+  time: 0
 --- !u!114 &2009288937
 MonoBehaviour:
   m_ObjectHideFlags: 0
