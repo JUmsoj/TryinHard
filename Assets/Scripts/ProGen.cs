@@ -50,6 +50,7 @@ public class ProGen : MonoBehaviour
         }
         var player = GameObject.Find("Player");
         start = player.transform.position;
+        
     }
     void Awake()
     {

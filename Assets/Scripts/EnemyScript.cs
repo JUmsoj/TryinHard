@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class EnemyScript : MonoBehaviour
 {
+    public int health { get; set; } = 100;
+    public float damage { get; set; } = 2;
+    public int speed { get; set; } = 5;
     private MeshRenderer mr;
     public bool hascrate = false;
     public bool active = false;
@@ -69,37 +72,35 @@ public class EnemyScript : MonoBehaviour
         spawner.spawn(GameObjects);
         yield break;
     }
-    private IEnumerator Fight()
+    
+    private void OnCollisionStay(Collision collision)
     {
-        active = true;
-        yield return new WaitForSeconds(1);
-        PlayerScript.health--;
-        active = false;
-        Debug.Log("took damage");
-        yield break;
+        if(collision.gameObject.CompareTag("Finish"))
+        {
+            PlayerScript.health -= Mathf.Ceil(Time.deltaTime * damage)/2;
+            PlayerScript.health = Math.Round(PlayerScript.health, 1);
+            Debug.LogWarning(PlayerScript.health);
+            if(PlayerScript.health <= 0)
+            {
+                Destroy(GameObject.FindAnyObjectByType<PlayerScript>().gameObject); 
+                
+            }
+        }
     }
+    
     void Move()
     {
         if (touchingground && gameObject.name != "Enemy")
         {
-            rb.transform.position = Vector3.MoveTowards(gameObject.transform.position, player.transform.position, Time.deltaTime * 5);
+            rb.transform.position = Vector3.MoveTowards(gameObject.transform.position, player.transform.position, Time.deltaTime * speed);
 
         }
-        if(touchingplayer && !active)
-        {
-            StartCoroutine(Fight());
-        }
+        
     }
     private void OnCollisionEnter(Collision collision)
     {
 
-        if (collision.gameObject.CompareTag("Finish"))
-        {
-            
-            touchingplayer = true;
-            print("touched player");
-            PlayerScript.health--;
-        }
+        
         if (collision.gameObject.CompareTag("Tile"))
         { 
             touchingground = true;
@@ -135,11 +136,7 @@ public class EnemyScript : MonoBehaviour
     }
     private void OnCollisionExit(Collision collision)
     {
-        if(collision.gameObject.CompareTag("Finish"))
-        {
-            touchingplayer = false;
-            PlayerScript.health--;
-        }
+        
         if(collision.gameObject.CompareTag("Floor"))
         {
             touchingground = false;

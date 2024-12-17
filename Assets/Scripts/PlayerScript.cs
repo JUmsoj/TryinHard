@@ -27,6 +27,15 @@ public class PlayerScript : MonoBehaviour
     Transform trans;
     public Transform cam;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void OnDestroy()
+    {
+        foreach (var x in Resources.FindObjectsOfTypeAll(typeof(GameObject)))
+        {
+            Destroy(x);
+        }
+        // add code for death
+
+    }
     private void Awake()
     {
         controls = new();
@@ -100,8 +109,8 @@ public class PlayerScript : MonoBehaviour
 
 
 
-                var temp = 5f/2f;
-                move = temp * controls.Main.Move.ReadValue<Vector3>();
+                var temp = 5 / 4;
+                move = temp * controls.Main.Move.ReadValue<Vector3>()/5;
                
                 
                 move = transform.TransformDirection(move);

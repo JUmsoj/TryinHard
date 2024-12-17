@@ -134,7 +134,7 @@ public class Quest<T>
     public static int level = 0;
     T num; // This field is declared but not used. You might want to consider its purpose.
 
-    public Quest(T goal, T start, float exp_val)
+    public Quest(T goal,  float exp_val,T start = default)
     {
         this.goal = goal;
         this.start = start;
@@ -339,7 +339,7 @@ public class FollowQuest : Quest<GameObject>
 {
     private float distance;
     bool called = false;
-    public FollowQuest(GameObject goal, GameObject start, float exp_val) : base(goal, start, exp_val)
+    public FollowQuest(GameObject goal, GameObject start, float exp_val) : base(goal, start: start, exp_val:exp_val)
     {
         distance = Vector3.Distance(goal.transform.position, start.transform.position);
        
@@ -381,7 +381,7 @@ public class FetchQuest : Quest<GameObject>
     InputActionMap quests_inputs;
     InputAction give;
     
-    public FetchQuest(GameObject goal, GameObject start, float exp) : base(goal, start, exp)
+    public FetchQuest(GameObject goal, GameObject start, float exp) : base(goal, start:start, exp_val:exp)
     {
         this.goal = goal;
         this.start = start;
