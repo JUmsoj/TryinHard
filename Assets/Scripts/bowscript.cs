@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks.Sources;
 using JetBrains.Annotations;
 using System.Linq;
+using UnityEngine.Events;
 public class QUESTS : ScriptableObject
 {
     public Quest<float>[] Quests { get; set; } = new Quest<float>[5];
@@ -39,23 +40,24 @@ public class bowscript : MonoBehaviour
     }
     public void StartingQuests()
     {
-        Debug.Log("Starting Quests");
+        Debug.LogWarning("Starting Quests");
         try
         {
-            quest.Quests[0] = new KillQuest(start: sword.GetComponent<SwordScript>().kill, goal: 3f, exp: 5f);
+            quest.Quests[0] = new KillQuest(start: sword.GetComponent<SwordScript>().kill, goal: 3f, exp: 5f, Event: SwordScript.onkill);
         }
         catch(Exception)
         {
             sword.SetActive(true);
-            quest.Quests[0] = new KillQuest(start: GameObject.Find("sword").GetComponent<SwordScript>().kill, goal: 3f, exp: 5f);
+            quest.Quests[0] = new KillQuest(start: GameObject.Find("sword").GetComponent<SwordScript>().kill, goal: 3f, exp: 5f, Event: SwordScript.onkill);
             sword.SetActive(false);
         }
         quest.NPCBasedQuests[0] = new FetchQuest(GameObject.Find("Item"), GameObject.Find("NPC"), exp: 10f);
-      
+        var enemey = Resources.Load<GameObject>("Enemy");
+        quest.NPCBasedQuests[1] = new BossQuest(null, 5f,  null, Instantiate(enemey), Instantiate(enemey) );
     }
     private void OnEnable()
     {
-        
+        if (Quest<float>.quests == null) Quest<float>.quests = quest;
         controls.Main.Bow.Enable();
         rb = GetComponent<Rigidbody>();
         controls.Main.Bow.performed += Shoot;
@@ -100,7 +102,8 @@ public class bowscript : MonoBehaviour
 [Serializable]
 public class Quest<T>
 {
-    protected QUESTS quests = GameObject.FindFirstObjectByType<bowscript>().quest;
+    protected bool active = true;
+    public static QUESTS quests = GameObject.FindFirstObjectByType<bowscript>().quest;
     int FindInstanceOfThing<s>(Type type, Quest<s>[] array)
     {
         var quest = array;
@@ -124,7 +127,7 @@ public class Quest<T>
             return instance;
         }
     }
-    protected bool completed = false;
+    public bool completed = false;
     protected float exp;
     protected GameObject player = GameObject.FindGameObjectWithTag("Finish");
      public T start { get; set; }
@@ -136,6 +139,7 @@ public class Quest<T>
 
     public Quest(T goal,  float exp_val,T start = default)
     {
+        if (quests != null) Debug.LogError("letsgo");
         this.goal = goal;
         this.start = start;
         exp = exp_val;
@@ -157,15 +161,18 @@ public class Quest<T>
     {
         // Implementation for progress could go here
     }
-    protected void Complete()
+    protected void Complete(bool inarray)
     {
-        Debug.LogError("completed task");
-        player.GetComponent<PlayerScript>().exp += exp;
-        completed = true;
-        if (levelups[level] >= GameObject.FindAnyObjectByType<PlayerScript>().exp)
+        if (inarray)
         {
-            level++;
-            Debug.Log("Leveled Up");
+            Debug.LogError("completed task");
+            player.GetComponent<PlayerScript>().exp += exp;
+            completed = true;
+            if (levelups[level] >= GameObject.FindAnyObjectByType<PlayerScript>().exp)
+            {
+                level++;
+                Debug.Log("Leveled Up");
+            }
         }
                
     }
@@ -211,20 +218,29 @@ public class Quest<T>
 public class KillQuest : Quest<float>
 {
     float kills;
-    public KillQuest(float goal,  float start, float exp) : base(goal, start, exp)
+    UnityEvent event_;
+    public KillQuest(float goal,  float start, float exp, UnityEvent Event = null) : base(goal, start, exp)
     {
         this.goal = goal;
         kills = 0;
         this.start = start;
+        Event.AddListener(Progress);
+        event_ = Event;
     }
+    
     public override void Progress()
     {
+        Debug.LogWarning("Thing");
         kills = GameObject.Find("sword").GetComponent<SwordScript>().kill;
-        if(start + goal >= kills && !completed)
+        if(start + goal <= kills && !completed)
         {
-            Complete();
+            Complete(Array.IndexOf(quests.Quests, this) != -1);
         }
       
+    }
+    ~KillQuest()
+    {
+        event_.RemoveListener(Progress);
     }
 }
 
@@ -422,7 +438,7 @@ public class FetchQuest : Quest<GameObject>
             Debug.Log("Hi");
             
             PlayerScript.Deactivate(goal);
-            Complete();
+            Complete(true);
         }
        
         

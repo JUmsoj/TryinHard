@@ -3,9 +3,11 @@ using System;
 using System.Collections;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class EnemyScript : MonoBehaviour
 {
+    public UnityEvent<GameObject> Event { get; set; }
     public int health { get; set; } = 100;
     public float damage { get; set; } = 2;
     public int speed { get; set; } = 5;
@@ -20,8 +22,13 @@ public class EnemyScript : MonoBehaviour
     public bool touchingplayer = false;
     private TerrainGen[] terrainGens;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void OnDestroy()
+    {
+        Event?.Invoke(gameObject);
+    }
     void Awake()
     {
+        
         mr = GetComponent<MeshRenderer>();
         GetComponent<Rigidbody>().mass *= 7f;
         player = GameObject.Find("Player");

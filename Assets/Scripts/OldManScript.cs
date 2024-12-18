@@ -75,6 +75,7 @@ public class OldManScript : MonoBehaviour
         }
         else if (distance < 10 && gavequests)
         {
+            Debug.LogError("Stuff");
             for(int i = 0; i < questslength; i++)
             {
                 AddToArray(bow.quest.Quests, i, fquest_option.quests);
@@ -95,7 +96,7 @@ public class OldManScript : MonoBehaviour
             
             var item = GameObject.Find("Item");
             var npc = GameObject.Find("NPC");
-            fquest_option.quests[i] = (Quest<float>)Activator.CreateInstance(fquest_option.types[random_num], 3f, sword.kill, 5f);
+            fquest_option.quests[i] = (Quest<float>)Activator.CreateInstance(fquest_option.types[random_num], 3f, sword.kill, 5f, SwordScript.onkill);
             fquest_option_object.quests[i] = (Quest<GameObject>)Activator.CreateInstance(fquest_option_object.types[random_num], item, npc, 10f);
             if (fquest_option.quests[i] != null)
             {

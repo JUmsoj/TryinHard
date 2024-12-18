@@ -10,7 +10,7 @@ using UnityEngine.Animations;
 using UnityEngine.InputSystem;
 public class PlayerScript : MonoBehaviour
 {
-
+    public bool IsInBossFight { get; set; } = false;
     [SerializeField] private float exp_backdoor;
     public float exp { get { return exp_backdoor; } set { exp_backdoor = value; } }
     public float thing;

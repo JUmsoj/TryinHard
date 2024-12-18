@@ -8,6 +8,8 @@ using UnityEngine.UI;
 using UnityEngine.WSA;
 using UnityEngine.InputSystem;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
+using System.Net.NetworkInformation;
+using UnityEngine.Events;
 public class SwordScript : MonoBehaviour
 {
     // private string[] attacks;
@@ -26,7 +28,7 @@ public class SwordScript : MonoBehaviour
     private static List<GameObject> inv;
     private static int selection;
     private Animator anim;
-    
+    public static UnityEvent onkill = new();
     Quaternion rotate;
     private int directionx;
     private int directionz;
@@ -38,6 +40,7 @@ public class SwordScript : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
+        
         anim = FindFirstObjectByType<Animator>();
         controls = new();
         quest = GameObject.FindAnyObjectByType<bowscript>().quest;
@@ -138,18 +141,53 @@ public class SwordScript : MonoBehaviour
         Debug.Log("threw");
         return 0;
     }
+    private void OnCollisionStay(Collision collision)
+    {
+        bool isquestthere = startquest != null && quest.Quests[0] != null;
+        if (isquestthere)
+        {
+            startquest = quest.Quests[quest.Quests[0].Firstactivequest];
+        }
+        ref var enemy_count = ref EnemyScript.spawner.count;
+        var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
+        if (collision.gameObject.CompareTag("Enemy") && Player.Inventory.INVENTORY[0] == gameObject)
+        {
+            GameObject thing = collision.gameObject;
+            
+            var obj = collision.gameObject.GetComponent<EnemyScript>();
+            for (int k = 0; k < 5; k++)
+            {
+                obj.health -= ((int)Mathf.Ceil(Time.deltaTime) + 5)/60;
+            }
+            if (obj.health <= 0)
+            {
+                enemy_count--;
+                Destroy(thing);
+                kills++;
+                onkill.Invoke();
+
+            }
+            
+            
+        }
+    }
+    
     private void OnCollisionEnter(Collision collision)
     {
         bool isquestthere = startquest != null && quest.Quests[0] != null;
         if (isquestthere )
         {
             startquest = quest.Quests[quest.Quests[0].Firstactivequest];
+            
+
         }
+        
         ref var enemy_count = ref EnemyScript.spawner.count;
         GameObject thing = collision.gameObject;
         var Player = GameObject.Find("Player").GetComponent<PlayerScript>();
         if(collision.gameObject.CompareTag("Enemy") && Player.Inventory.INVENTORY[0] == gameObject)
         {
+            
             var obj = collision.gameObject.GetComponent<EnemyScript>();
             for (int k = 0; k < 5; k++)
             {
@@ -157,18 +195,14 @@ public class SwordScript : MonoBehaviour
             }
             if (obj.health <= 0)
             {
+                kills++;
+                Debug.LogError(kills);
                 enemy_count--;
                 Destroy(thing);
+                onkill.Invoke();
+                
             }
-            if (isquestthere)
-            {
-                int startquesty = startquest.Firstactivequest;
-                if (startquesty != -1)
-                {
-                    quest.Quests[startquesty].Progress();
-                    quest.Quests[startquesty] = null;
-                }
-            }
+            
             
 
                     

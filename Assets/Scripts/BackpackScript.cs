@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using UnityEngine.InputSystem;
+using System.Runtime.CompilerServices;
+using UnityEngine.Events;
 public class BackpackScript : MonoBehaviour
 {
     public PlayerControls controls;
@@ -59,3 +61,4 @@ public class BackpackScript : MonoBehaviour
     
 
 }
+
